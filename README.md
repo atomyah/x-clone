@@ -148,136 +148,16 @@ XのようなSNSアプリケーションをWeb上で開発する。
 
 ## **ER図**
 
-![image.png](image.png)
+![image.png](./images/image.png)
 
 ---
 
 ## システムアーキテクチャ図
 
-![Decision Path Option-2025-12-23-061319.png](Decision_Path_Option-2025-12-23-061319.png)
+![Decision Path Option-2025-12-23-061319.png](./images/Decision_Path_Option-2025-12-23-061319.png)
 
 ---
 
-## ディレクトリ構成
-
-project-root/
-├── .env.local                    # 環境変数（DB接続情報、API KEY等）
-├── .eslintrc.json                # ESLint設定（コード品質チェック）
-├── .gitignore                    # Gitで管理しないファイルのリスト
-├── .prettierrc                   # Prettier設定（コード整形）
-├── next.config.js                # Next.js設定ファイル
-├── package.json                  # npmパッケージ管理・スクリプト定義
-├── postcss.config.js             # PostCSS設定（Tailwind用）
-├── tailwind.config.js            # Tailwind CSS設定
-├── tsconfig.json                 # TypeScript設定
-├── [README.md](http://readme.md/)                     # プロジェクト説明ドキュメント
-│
-├── app/                          # Next.js App Router（ルーティング・ページ）
-│   ├── layout.tsx                # ルートレイアウト（全ページ共通）
-│   ├── page.tsx                  # トップページ（/）
-│   ├── globals.css               # グローバルスタイル
-│   │
-│   ├── auth/                     # 認証関連ページ
-│   │   ├── sign-in/              # ログインページ
-│   │   │   └── page.tsx          # /auth/sign-in
-│   │   └── sign-up/              # 新規登録ページ
-│   │       └── page.tsx          # /auth/sign-up
-│   │
-│   ├── dashboard/                # ダッシュボード
-│   │   ├── page.tsx              # /dashboard メインダッシュボード
-│   │   └── timeline/             # タイムライン
-│   │       └── page.tsx          # /dashboard/timeline
-│   │
-│   ├── profile/                  # ユーザープロフィール
-│   │   └── [id]/                 # 動的ルート（ユーザーID）
-│   │       ├── page.tsx          # /profile/[id] プロフィール表示
-│   │       └── edit/             # プロフィール編集
-│   │           └── page.tsx      # /profile/[id]/edit
-│   │
-│   ├── post/                     # 投稿詳細
-│   │   └── [id]/                 # 動的ルート（投稿ID）
-│   │       └── page.tsx          # /post/[id] 投稿詳細・返信表示
-│   │
-│   └── api/                      # API Routes（バックエンドAPI）
-│       ├── posts/                # 投稿関連API
-│       │   ├── route.ts          # GET(一覧取得), POST(投稿作成)
-│       │   └── [id]/             # 個別投稿操作
-│       │       └── route.ts      # GET(詳細), DELETE(削除)
-│       ├── users/                # ユーザー関連API
-│       │   ├── route.ts          # GET(ユーザー一覧・検索)
-│       │   └── [id]/             # 個別ユーザー操作
-│       │       └── route.ts      # GET(詳細), PUT(更新)
-│       ├── likes/                # いいね関連API
-│       │   └── route.ts          # POST(いいね), DELETE(いいね解除)
-│       └── follows/              # フォロー関連API
-│           └── route.ts          # POST(フォロー), DELETE(アンフォロー)
-│
-├── components/                   # 再利用可能なReactコンポーネント
-│   ├── ui/                       # shadcn/ui 汎用UIコンポーネント
-│   │   ├── button.tsx            # ボタンコンポーネント
-│   │   ├── card.tsx              # カードコンポーネント
-│   │   ├── input.tsx             # 入力フィールド
-│   │   ├── textarea.tsx          # テキストエリア
-│   │   ├── avatar.tsx            # アバター表示
-│   │   ├── dialog.tsx            # モーダルダイアログ
-│   │   ├── dropdown-menu.tsx     # ドロップダウンメニュー
-│   │   └── ...                   # その他UIコンポーネント
-│   │
-│   └── features/                 # 機能別コンポーネント
-│       ├── post/                 # 投稿関連コンポーネント
-│       │   ├── post-card.tsx     # 投稿カード表示
-│       │   ├── post-form.tsx     # 投稿フォーム
-│       │   ├── post-actions.tsx  # いいね・返信・削除ボタン
-│       │   └── post-list.tsx     # 投稿リスト表示
-│       │
-│       ├── user/                 # ユーザー関連コンポーネント
-│       │   ├── user-profile.tsx  # ユーザープロフィール表示
-│       │   ├── user-card.tsx     # ユーザーカード
-│       │   ├── user-avatar.tsx   # ユーザーアバター
-│       │   └── follow-button.tsx # フォローボタン
-│       │
-│       └── timeline/             # タイムライン関連コンポーネント
-│           ├── timeline-feed.tsx # タイムラインフィード
-│           ├── timeline-filter.tsx # フィルター（全体・フォロー中）
-│           └── timeline-item.tsx # タイムライン項目
-│
-├── lib/                          # ユーティリティ・ヘルパー関数
-│   ├── prisma.ts                 # Prismaクライアントインスタンス
-│   ├── clerk.ts                  # Clerk認証設定・ヘルパー
-│   ├── utils.ts                  # 汎用ユーティリティ関数
-│   ├── validations.ts            # バリデーションスキーマ（Zod等）
-│   └── constants.ts              # 定数定義（文字数制限等）
-│
-├── prisma/                       # Prismaデータベース設定
-│   ├── schema.prisma             # データベーススキーマ定義
-│   └── migrations/               # マイグレーション履歴
-│       ├── migration_lock.toml   # マイグレーションロックファイル
-│       └── YYYYMMDDHHMMSS_migration_name/  # 各マイグレーション
-│           └── migration.sql     # SQLマイグレーションファイル
-│
-├── public/                       # 静的ファイル（公開アセット）
-│   ├── images/                   # 画像ファイル
-│   ├── icons/                    # アイコン・ファビコン
-│   └── fonts/                    # カスタムフォント
-│
-├── tests/                        # テストファイル
-│   ├── unit/                     # ユニットテスト
-│   │   ├── lib/                  # ユーティリティ関数のテスト
-│   │   │   └── utils.test.ts     # utils.tsのテスト
-│   │   └── components/           # コンポーネントのテスト
-│   │       └── post-card.test.tsx # PostCardコンポーネントのテスト
-│   │
-│   └── e2e/                      # E2Eテスト（Playwright）
-│       ├── auth.spec.ts          # 認証フローのテスト
-│       ├── post.spec.ts          # 投稿機能のテスト
-│       ├── profile.spec.ts       # プロフィール機能のテスト
-│       └── follow.spec.ts        # フォロー機能のテスト
-│
-└── types/                        # TypeScript型定義
-├── index.ts                  # 型定義のエクスポート
-├── post.ts                   # 投稿関連の型定義
-├── user.ts                   # ユーザー関連の型定義
-└── api.ts                    # APIレスポンスの型定義
 
 ---
 
