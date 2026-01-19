@@ -5,7 +5,7 @@ import { ProfileHeader } from '@/components/profile/profile-header';
 import { ProfileInfo } from '@/components/profile/profile-info';
 import { ProfileTabs } from '@/components/profile/profile-tabs';
 import { ProfileTimeline } from '@/components/profile/profile-timeline';
-import { getUserByUsername } from '@/lib/users';
+import { getUserByUsername, getCurrentUserId } from '@/lib/users';
 import { getUserPosts } from '@/lib/posts';
 import { mapPostsToUI, formatUserProfile } from '@/lib/mappers';
 import type { Post, LiveEvent, NewsItem } from '@/types/post';
@@ -28,6 +28,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   if (!user) {
     notFound();
   }
+
+  // 現在のログインユーザーIDを取得
+  const currentUserId = await getCurrentUserId();
+  
+  // 表示しているユーザーが自分のプロフィールかどうかを判定
+  const isOwnProfile = currentUserId === user.id;
 
   // データアクセス層からユーザーの投稿を取得
   const dbPosts = await getUserPosts(user.id);
@@ -56,7 +62,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             joinedDate={profile.joinedDate}
             following={profile.following}
             followers={profile.followers}
-            isOwnProfile={false}
+            isOwnProfile={isOwnProfile}
           />
 
           <ProfileTabs />

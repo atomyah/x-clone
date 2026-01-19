@@ -53,6 +53,7 @@ export function mapPostToUI(post: PostWithUser): Post {
     createdAt: post.createdAt, // 元の日時を保持（詳細ページでの完全な日時表示用）
     content: post.content,
     likes: post._count?.likes || 0,
+    isLiked: post.isLiked || false, // 現在のユーザーがいいねしているかどうか
     retweets: 0, // リツイート機能は未実装
     replies: post._count?.replies || 0,
     views: Math.floor(Math.random() * 1000) + 100, // 仮の表示数（後でデータベースから取得）

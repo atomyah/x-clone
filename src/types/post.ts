@@ -15,6 +15,7 @@ export interface Post {
   hasLink?: boolean;
   link?: string;
   likes: number;
+  isLiked?: boolean; // 現在のユーザーがいいねしているかどうか
   retweets: number;
   replies: number;
   pinned?: boolean;

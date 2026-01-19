@@ -1,8 +1,13 @@
+// 投稿一覧表示用のPostItemコンポーネント.
+// このコンポーネントはapp/page.tsxで使用されている。
+// useTransitionという楽観的UI更新（Optimistic Update）を使ってる
+// → handleLikeClick()関数の中の５４～７３行目
 'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -14,6 +19,7 @@ import {
   Pin,
 } from 'lucide-react';
 import type { Post } from '@/types/post';
+import { toggleLike } from '@/lib/actions/posts';
 
 interface PostItemProps {
   post: Post;
@@ -21,6 +27,9 @@ interface PostItemProps {
 
 export function PostItem({ post }: PostItemProps) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [isLiked, setIsLiked] = useState(post.isLiked || false);
+  const [likesCount, setLikesCount] = useState(post.likes);
   
   // usernameから@を除去してプロフィールURLを生成
   const profileUrl = `/profile/${post.user.username.replace('@', '')}`;
@@ -35,6 +44,32 @@ export function PostItem({ post }: PostItemProps) {
     if (postDetailUrl !== '#') {
       router.push(postDetailUrl);
     }
+  };
+
+  const handleLikeClick = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // 親要素のクリックイベントを防ぐ
+    
+    if (!post.uuid) return;
+
+    // 楽観的UI更新
+    const newIsLiked = !isLiked;
+    setIsLiked(newIsLiked); // すぐに♡を赤くする
+    setLikesCount(prev => newIsLiked ? prev + 1 : prev - 1); // カウントも即座に更新
+    // サーバーからの応答を待たずに、すぐにUIを更新してしまう。
+
+    // その後に、UIを更新した後、バックグラウンドでサーバーに処理を依頼
+    startTransition(async () => {
+      const result = await toggleLike(post.uuid!);
+      
+      if (!result.success) {
+        // エラー時は元に戻す
+        setIsLiked(!newIsLiked);
+        setLikesCount(prev => newIsLiked ? prev - 1 : prev + 1);
+      } else {
+        // 成功時はサーバーの状態に合わせる
+        setIsLiked(result.isLiked);
+      }
+    });
   };
 
   return (
@@ -127,12 +162,15 @@ export function PostItem({ post }: PostItemProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 gap-2 hover:text-red-600 hover:bg-red-600/10"
+                className={`h-8 gap-2 hover:text-red-600 hover:bg-red-600/10 ${
+                  isLiked ? 'text-red-600' : ''
+                }`}
                 title="いいね"
-                onClick={(e) => e.stopPropagation()}
+                onClick={handleLikeClick}
+                disabled={isPending}
               >
-                <Heart className="w-4 h-4" />
-                <span>{post.likes}</span>
+                <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
+                <span>{likesCount}</span>
               </Button>
               <Button
                 variant="ghost"

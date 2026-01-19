@@ -27,6 +27,13 @@ export function Sidebar({ className }: SidebarProps) {
 
   const username = user?.username || user?.emailAddresses[0]?.emailAddress?.split('@')[0] || 'username';
 
+  // usernameから@を除去してプロフィールURLを生成
+  const profileUrl = `/profile/${username.replace('@', '')}`;
+
+  const handleProfileClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 親要素のクリックイベントを防ぐ
+  };
+
   return (
     <aside className={`w-[55px] lg:w-[230px] h-screen sticky top-0 px-1 lg:px-3 py-4 flex flex-col items-center lg:items-stretch shrink-0 ${className || ''}`}>
       <div className="flex items-center justify-center lg:justify-start gap-2 px-3 mb-8">
@@ -79,7 +86,7 @@ export function Sidebar({ className }: SidebarProps) {
           title="プロフィール"
           asChild
         >
-          <Link href="/profile">
+          <Link href={profileUrl} onClick={handleProfileClick}>
             <UserCircle className="size-5 lg:size-7 shrink-0" />
             <span className="hidden lg:inline text-base">プロフィール</span>
           </Link>

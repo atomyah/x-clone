@@ -384,7 +384,7 @@ export default function ProfilePage() {
             joinedDate="2018年4月"
             following={22000}
             followers={25000}
-            isOwnProfile={false}
+            isOwnProfile={true}
           />
 
           <ProfileTabs />

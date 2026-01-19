@@ -1,7 +1,13 @@
+// 投稿詳細ページ表示用のPostItemDetailedコンポーネント.
+// このコンポーネントはapp/posts/[postId]/page.tsxで使用されている。
+// useTransitionという楽観的UI更新（Optimistic Update）を使ってる
+// → handleLikeClick()関数の中の５０～７０行目
+
 'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -16,6 +22,7 @@ import {
 } from 'lucide-react';
 import type { Post, PostWithReplies } from '@/types/post';
 import { formatDetailDateTime } from '@/lib/format-date';
+import { toggleLike } from '@/lib/actions/posts';
 
 interface PostItemDetailedProps {
   post: Post | PostWithReplies;
@@ -27,6 +34,10 @@ interface PostItemDetailedProps {
  * 投稿全体をクリックしても遷移しない（既に詳細ページにいるため）
  */
 export function PostItemDetailed({ post, showReplies = false }: PostItemDetailedProps) {
+  const [isPending, startTransition] = useTransition();
+  const [isLiked, setIsLiked] = useState(post.isLiked || false);
+  const [likesCount, setLikesCount] = useState(post.likes);
+  
   // usernameから@を除去してプロフィールURLを生成
   const profileUrl = `/profile/${post.user.username.replace('@', '')}`;
   
@@ -35,6 +46,28 @@ export function PostItemDetailed({ post, showReplies = false }: PostItemDetailed
   
   // 詳細ページ用の日時表示
   const dateTime = post.createdAt ? formatDetailDateTime(post.createdAt) : null;
+
+  const handleLikeClick = async () => {
+    if (!post.uuid) return;
+
+    // 楽観的UI更新
+    const newIsLiked = !isLiked;
+    setIsLiked(newIsLiked);
+    setLikesCount(prev => newIsLiked ? prev + 1 : prev - 1);
+
+    startTransition(async () => {
+      const result = await toggleLike(post.uuid!);
+      
+      if (!result.success) {
+        // エラー時は元に戻す
+        setIsLiked(!newIsLiked);
+        setLikesCount(prev => newIsLiked ? prev - 1 : prev + 1);
+      } else {
+        // 成功時はサーバーの状態に合わせる
+        setIsLiked(result.isLiked);
+      }
+    });
+  };
 
   return (
     <article className="p-4 hover:bg-cyan-50/50 dark:hover:bg-cyan-950/20 transition-colors group">
@@ -131,11 +164,15 @@ export function PostItemDetailed({ post, showReplies = false }: PostItemDetailed
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 gap-2 hover:text-red-600 hover:bg-red-600/10"
+              className={`h-8 gap-2 hover:text-red-600 hover:bg-red-600/10 ${
+                isLiked ? 'text-red-600' : ''
+              }`}
               title="いいね"
+              onClick={handleLikeClick}
+              disabled={isPending}
             >
-              <Heart className="w-4 h-4" />
-              <span>{post.likes}</span>
+              <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
+              <span>{likesCount}</span>
             </Button>
             <Button
               variant="ghost"
