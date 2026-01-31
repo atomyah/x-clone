@@ -1,6 +1,10 @@
+// プロフィール詳細情報ページ用コンポーネント
+// app/profile/[username]/page.tsxで呼ばれるProfileInfoコンポーネント
+
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Check, Link as LinkIcon, Calendar } from 'lucide-react';
@@ -53,8 +57,14 @@ export function ProfileInfo({
             <AvatarFallback>{name[0]}</AvatarFallback>
           </Avatar>
           {isOwnProfile ? (
-            <Button variant="outline" className="rounded-full font-bold h-9 px-3 md:px-4 text-sm md:text-base">
-              プロフィールを編集
+            <Button
+              variant="outline"
+              className="rounded-full font-bold h-9 px-3 md:px-4 text-sm md:text-base"
+              asChild
+            >
+              <Link href={`/profile/${username.replace('@', '')}/edit`}>
+                プロフィールを編集
+              </Link>
             </Button>
           ) : (
             <Button className="rounded-full font-bold h-9 px-3 md:px-4 text-sm md:text-base">フォロー</Button>
