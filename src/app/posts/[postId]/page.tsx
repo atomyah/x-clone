@@ -55,7 +55,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
                     <div className="absolute left-[31px] top-0 bottom-0 w-px bg-border/10" />
                   )}
                   <div className="pl-4">
-                    <PostItemDetailed post={reply} />
+                    <PostItemDetailed post={reply} clickable={true} />
                   </div>
                 </div>
               ))}

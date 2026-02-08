@@ -1,13 +1,17 @@
 // プロフィール詳細情報ページ用コンポーネント
 // app/profile/[username]/page.tsxで呼ばれるProfileInfoコンポーネント
+// （カバー画像からフォロー数表示部までのコンポーネント. その上の{displayName}と{postCount} 件のポストの所はProfileHeaderコンポーネント）
+// 58.フォロー・アンフォロー機能を実装でtoggleFollowを呼び出している。
 
 'use client';
 
+import { useState, useTransition } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Check, Link as LinkIcon, Calendar } from 'lucide-react';
+import { toggleFollow } from '@/lib/actions/users';
 
 interface ProfileInfoProps {
   bannerImage?: string;
@@ -21,6 +25,8 @@ interface ProfileInfoProps {
   following: number;
   followers: number;
   isOwnProfile?: boolean;
+  userId: string;
+  isFollowing: boolean;
 }
 
 export function ProfileInfo({
@@ -35,10 +41,23 @@ export function ProfileInfo({
   following,
   followers,
   isOwnProfile = false,
+  userId,
+  isFollowing: initialIsFollowing,
 }: ProfileInfoProps) {
+  const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
+  const [isPending, startTransition] = useTransition();
+
+  const handleFollow = () => {
+    startTransition(async () => {
+      const result = await toggleFollow(userId);
+      if (result.success) {
+        setIsFollowing(result.isFollowing);
+      }
+    });
+  };
   return (
     <div className="relative">
-      {/* バナー画像 */}
+      {/* カバー画像 */}
       <div className="w-full h-32 md:h-48 bg-muted relative">
         <Image
           src={bannerImage}
@@ -67,7 +86,14 @@ export function ProfileInfo({
               </Link>
             </Button>
           ) : (
-            <Button className="rounded-full font-bold h-9 px-3 md:px-4 text-sm md:text-base">フォロー</Button>
+            <Button
+              onClick={handleFollow}
+              disabled={isPending}
+              variant={isFollowing ? 'outline' : 'default'}
+              className="rounded-full font-bold h-9 px-3 md:px-4 text-sm md:text-base"
+            >
+              {isPending ? '処理中...' : isFollowing ? 'フォロー中' : 'フォロー'}
+            </Button>
           )}
         </div>
 

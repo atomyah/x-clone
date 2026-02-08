@@ -1,3 +1,23 @@
+/**
+ * ========================================
+ * データアクセス層（DAL: Data Access Layer）
+ * ========================================
+ * 
+ * 【役割】
+ * - Server Componentsから呼び出されるデータ読み取り専用の関数群
+ * - データベースからの情報取得（SELECT操作）
+ * - 認証情報の取得
+ * 
+ * 【使用箇所】
+ * - app/profile/[username]/page.tsx（Server Component）
+ * - app/profile/[username]/edit/page.tsx（Server Component）
+ * - その他のServer Components
+ * 
+ * 【注意】
+ * - Client Componentsからは直接呼び出さない
+ * - データの書き込み（INSERT/UPDATE/DELETE）は lib/actions/users.ts を使用
+ */
+
 import { prisma } from './prisma';
 import { auth } from '@clerk/nextjs/server';
 import type { User } from '@prisma/client';
@@ -61,3 +81,29 @@ export async function getUserByUsername(username: string): Promise<UserWithCount
   }
 }
 
+/**
+ * 現在のユーザーが指定したユーザーをフォローしているかどうかを確認
+ * @param followingId フォロー対象のユーザーID
+ * @param followerId フォローするユーザーID（現在のユーザー）
+ * @returns フォローしている場合はtrue、していない場合はfalse
+ */
+export async function isFollowing(followingId: string, followerId: string | null): Promise<boolean> {
+  if (!followerId) {
+    return false;
+  }
+
+  try {
+    const follow = await prisma.follow.findUnique({
+      where: {
+        followerId_followingId: { // @@id([followerId, followingId])のこと → Prismaスキーマで定義した複合主キー
+          followerId,
+          followingId,
+        },
+      },
+    });
+    return !!follow;
+  } catch (error) {
+    console.error('フォロー状態確認エラー:', error);
+    return false;
+  }
+}

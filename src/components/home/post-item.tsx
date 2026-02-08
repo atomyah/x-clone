@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import type { Post } from '@/types/post';
 import { toggleLike } from '@/lib/actions/posts';
+import { ReplyModal } from '@/components/home/reply-modal';
 
 interface PostItemProps {
   post: Post;
@@ -30,6 +31,7 @@ export function PostItem({ post }: PostItemProps) {
   const [isPending, startTransition] = useTransition();
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
   const [likesCount, setLikesCount] = useState(post.likes);
+  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   
   // usernameから@を除去してプロフィールURLを生成
   const profileUrl = `/profile/${post.user.username.replace('@', '')}`;
@@ -73,6 +75,7 @@ export function PostItem({ post }: PostItemProps) {
   };
 
   return (
+    <>
     <article 
       className="p-4 hover:bg-cyan-50/50 dark:hover:bg-cyan-950/20 transition-colors cursor-pointer group"
       onClick={handlePostClick}
@@ -142,9 +145,12 @@ export function PostItem({ post }: PostItemProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 gap-2 hover:text-primary hover:bg-primary/10"
+                className="h-8 gap-2 hover:text-green-600 hover:bg-green-600/10"
                 title="返信"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsReplyModalOpen(true);
+                }}
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>{post.replies}</span>
@@ -185,6 +191,19 @@ export function PostItem({ post }: PostItemProps) {
           </div>
         </div>
       </article>
+      {/* 返信モーダル */}
+      {post.uuid && (
+        <ReplyModal
+          open={isReplyModalOpen}
+          onOpenChange={setIsReplyModalOpen}
+          postId={post.uuid}
+          replyToUsername={post.user.username}
+          replyToName={post.user.name}
+          replyToContent={post.content}
+          replyToAvatar={post.user.avatar}
+        />
+      )}
+    </>
   );
 }
 

@@ -1,3 +1,8 @@
+// プロフィール詳細情報ページ用コンポーネント
+// の上の{displayName}と{postCount} 件のポストの所を表示している。
+// そこから下のカバー画像からフォロー数表示部までProfileInfoコンポーネント（ProfileInfo.tsx）
+// どちらもapp/profile/[username]/page.tsxで呼ばれるコンポーネント。
+
 'use client';
 
 import { Button } from '@/components/ui/button';

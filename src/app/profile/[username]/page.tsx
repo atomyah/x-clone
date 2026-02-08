@@ -1,3 +1,5 @@
+// Server Component
+// 
 import { notFound } from 'next/navigation';
 import { Sidebar } from '@/components/home/sidebar';
 import { RightSidebar } from '@/components/home/right-sidebar';
@@ -5,7 +7,7 @@ import { ProfileHeader } from '@/components/profile/profile-header';
 import { ProfileInfo } from '@/components/profile/profile-info';
 import { ProfileTabs } from '@/components/profile/profile-tabs';
 import { ProfileTimeline } from '@/components/profile/profile-timeline';
-import { getUserByUsername, getCurrentUserId } from '@/lib/users';
+import { getUserByUsername, getCurrentUserId, isFollowing } from '@/lib/users';
 import { getUserPosts } from '@/lib/posts';
 import { mapPostsToUI, formatUserProfile } from '@/lib/mappers';
 import type { Post, LiveEvent, NewsItem } from '@/types/post';
@@ -35,6 +37,9 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   // 表示しているユーザーが自分のプロフィールかどうかを判定
   const isOwnProfile = currentUserId === user.id;
 
+  // フォロー状態を取得（自分のプロフィールの場合はfalse）
+  const followingStatus = isOwnProfile ? false : await isFollowing(user.id, currentUserId);
+
   // データアクセス層からユーザーの投稿を取得
   const dbPosts = await getUserPosts(user.id);
   
@@ -63,6 +68,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             following={profile.following}
             followers={profile.followers}
             isOwnProfile={isOwnProfile}
+            userId={user.id}
+            isFollowing={followingStatus}
           />
 
           <ProfileTabs />

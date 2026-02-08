@@ -1,13 +1,39 @@
-// プロフィール更新用のServer Actionsを実装
+/**
+ * ========================================
+ * Server Actions層（ユーザー関連の書き込み操作）
+ * ========================================
+ * 
+ * 【役割】
+ * - Client Componentsから呼び出されるデータ書き込み専用の関数群
+ * - データベースへの更新・作成・削除（INSERT/UPDATE/DELETE操作）
+ * - フォーム送信やボタンクリックなどのユーザー操作を処理
+ * 
+ * 【使用箇所】
+ * - components/profile/profile-info.tsx（Client Component）→ toggleFollow
+ * - components/profile/profile-edit-form.tsx（Client Component）→ updateProfile
+ * - その他のClient Components
+ * 
+ * 【注意】
+ * - 'use server'ディレクティブが必要（Server Actionsとして動作）
+ * - Server Componentsからは直接呼び出さない（データ読み取りは lib/users.ts を使用）
+ * - revalidatePath()でページの再検証を行う
+ * 
+ * 60.カバー画像のアップロード処理を追加
+ */
 
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { uploadCoverImage } from '@/lib/storage';
 
 /**
- * Clerkの認証情報からデータベースのユーザーIDを取得
+ * 【内部関数】Clerkの認証情報からデータベースのユーザーIDを取得
+ * 
+ * 注意: この関数は lib/users.ts にも同じ実装があるが、
+ * Server Actions内で使用するため、ここにも定義している。
+ * 
  * @returns データベースのユーザーID（認証されていない場合はnull）
  */
 async function getCurrentUserId(): Promise<string | null> {
@@ -62,6 +88,7 @@ export async function updateProfile(
     // フォームデータからプロフィール情報を取得
     const displayName = formData.get('displayName') as string;
     const bio = formData.get('bio') as string;
+    const coverImage = formData.get('coverImage') as File | null;
 
     // バリデーション
     const trimmedDisplayName = displayName?.trim();
@@ -90,7 +117,7 @@ export async function updateProfile(
     // 既存のユーザーを取得
     const currentUser = await prisma.user.findUnique({
       where: { id: userId },
-      select: { username: true },
+      select: { username: true, coverImageUrl: true },
     });
 
     if (!currentUser) {
@@ -100,11 +127,33 @@ export async function updateProfile(
       };
     }
 
-    // プロフィールを更新（displayNameとbioのみ）
-    const updateData = {
+    // カバー画像のアップロード処理
+    let coverImageUrl: string | null | undefined = undefined;
+    if (coverImage && coverImage.size > 0) {
+      const uploadResult = await uploadCoverImage(coverImage, userId);
+      if (uploadResult.error) {
+        return {
+          success: false,
+          error: uploadResult.error,
+        };
+      }
+      coverImageUrl = uploadResult.url;
+    }
+
+    // プロフィールを更新
+    const updateData: {
+      displayName: string;
+      bio: string | null;
+      coverImageUrl?: string | null;
+    } = {
       displayName: trimmedDisplayName,
       bio: bio?.trim() || null,
     };
+
+    // カバー画像がアップロードされた場合のみ更新
+    if (coverImageUrl !== undefined) {
+      updateData.coverImageUrl = coverImageUrl;
+    }
 
     await prisma.user.update({
       where: { id: userId },
@@ -132,6 +181,103 @@ export async function updateProfile(
     return {
       success: false,
       error: 'プロフィールの更新に失敗しました。もう一度お試しください。',
+    };
+  }
+}
+
+/**
+ * フォロー/アンフォローのServer Action
+ * @param followingId フォローするユーザーのID
+ * @returns フォロー操作の結果
+ */
+export async function toggleFollow(followingId: string): Promise<{ success: boolean; isFollowing: boolean; error?: string }> {
+  try {
+    // 認証チェック
+    const followerId = await getCurrentUserId();
+    if (!followerId) {
+      return {
+        success: false,
+        isFollowing: false,
+        error: '認証が必要です。ログインしてください。',
+      };
+    }
+
+    // 自分自身をフォローできないようにチェック
+    if (followerId === followingId) {
+      return {
+        success: false,
+        isFollowing: false,
+        error: '自分自身をフォローすることはできません。',
+      };
+    }
+
+    // フォロー対象のユーザーが存在するか確認
+    const followingUser = await prisma.user.findUnique({
+      where: { id: followingId },
+      select: { id: true, username: true },
+    });
+
+    if (!followingUser) {
+      return {
+        success: false,
+        isFollowing: false,
+        error: 'ユーザーが見つかりません。',
+      };
+    }
+
+    // 既にフォローしているか確認
+    const existingFollow = await prisma.follow.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId,
+          followingId,
+        },
+      },
+    });
+
+    if (existingFollow) {
+      // アンフォロー（フォローを解除）
+      await prisma.follow.delete({
+        where: {
+          followerId_followingId: {
+            followerId,
+            followingId,
+          },
+        },
+      });
+      
+      // ページを再検証
+      revalidatePath('/');
+      revalidatePath(`/profile/${followingUser.username}`);
+      
+      return {
+        success: true,
+        isFollowing: false,
+      };
+    } else {
+      // フォローを追加
+      await prisma.follow.create({
+        data: {
+          followerId,
+          followingId,
+        },
+      });
+      
+      // ページを再検証
+      revalidatePath('/');
+      revalidatePath(`/profile/${followingUser.username}`);
+      
+      return {
+        success: true,
+        isFollowing: true,
+      };
+    }
+  } catch (error) {
+    console.error('フォロー操作エラー:', error);
+    return {
+      success: false,
+      isFollowing: false,
+      error: 'フォロー操作に失敗しました。もう一度お試しください。',
     };
   }
 }
