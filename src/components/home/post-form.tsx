@@ -2,14 +2,11 @@
 
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useAuth, useClerk, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  ImageIcon,
-  Smile,
-} from 'lucide-react';
+import { EmojiPicker } from '@/components/ui/emoji-picker';
 // Server Action↓
 import { createPost, type CreatePostState } from '@/lib/actions/posts';
 
@@ -22,6 +19,7 @@ export function PostForm() {
     initialState
   );
   const formRef = useRef<HTMLFormElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { isSignedIn } = useAuth();
   const { openSignIn } = useClerk();
   const { user } = useUser();
@@ -43,6 +41,25 @@ export function PostForm() {
     }
   };
 
+  // 絵文字を挿入する関数
+  const handleEmojiSelect = (emoji: string) => {
+    if (textareaRef.current) {
+      const textarea = textareaRef.current;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const newText = text.substring(0, start) + emoji + text.substring(end);
+      textarea.value = newText;
+      // カーソル位置を絵文字の後に移動
+      const newCursorPos = start + emoji.length;
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+      textarea.focus();
+      // フォームの値を更新（Reactの制御コンポーネントではないため、手動で更新）
+      const event = new Event('input', { bubbles: true });
+      textarea.dispatchEvent(event);
+    }
+  };
+
   return (
     <div className="p-4">       
       <form ref={formRef} action={formAction} onSubmit={handleSubmit}>  {/* フォームのaction属性にformActionを設定 */}
@@ -55,6 +72,7 @@ export function PostForm() {
           </Avatar>
           <div className="flex-1">
             <textarea
+              ref={textareaRef}
               name="content"
               className="w-full min-h-[60px] resize-none bg-transparent text-xl placeholder:text-muted-foreground focus:outline-none"
               placeholder="いまどうしてる？"
@@ -67,33 +85,7 @@ export function PostForm() {
             )}
             <div className="flex items-center justify-between pt-3 mt-3">
               <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-primary hover:bg-primary/10 shrink-0"
-                  title="メディア"
-                >
-                  <ImageIcon className="w-5 h-5" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-primary hover:bg-primary/10 shrink-0"
-                  title="GIF画像"
-                >
-                  <div className="w-5 h-5 flex items-center justify-center text-xs font-bold">GIF</div>
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-primary hover:bg-primary/10 shrink-0"
-                  title="絵文字"
-                >
-                  <Smile className="w-5 h-5" />
-                </Button>
+                <EmojiPicker onEmojiSelect={handleEmojiSelect} />
               </div>
               <Button
                 type="submit"

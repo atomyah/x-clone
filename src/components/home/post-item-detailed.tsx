@@ -168,7 +168,7 @@ export function PostItemDetailed({ post, showReplies = false, clickable = false 
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 gap-2 hover:text-primary hover:bg-primary/10"
+              className="h-8 gap-2 hover:text-primary hover:bg-blue-100 dark:hover:bg-blue-900/20"
               title="返信"
               onClick={(e) => {
                 e.stopPropagation();
@@ -207,18 +207,10 @@ export function PostItemDetailed({ post, showReplies = false, clickable = false 
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 gap-2 hover:text-primary hover:bg-primary/10"
-              title="ブックマーク"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Bookmark className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 gap-2 hover:text-primary hover:bg-primary/10"
+              className="h-8 gap-2 text-muted-foreground/20 hover:text-muted-foreground/20 hover:bg-transparent cursor-not-allowed"
               title="共有"
               onClick={(e) => e.stopPropagation()}
+              disabled
             >
               <Share className="w-4 h-4" />
             </Button>

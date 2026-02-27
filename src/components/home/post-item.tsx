@@ -181,9 +181,10 @@ export function PostItem({ post }: PostItemProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 gap-2 hover:text-primary hover:bg-primary/10"
+                className="h-8 gap-2 text-muted-foreground/20 hover:text-muted-foreground/20 hover:bg-transparent cursor-not-allowed"
                 title="共有"
                 onClick={(e) => e.stopPropagation()}
+                disabled
               >
                 <Share className="w-4 h-4" />
               </Button>

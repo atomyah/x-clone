@@ -4,45 +4,38 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  //url      = env("DATABASE_URL") 接続URL設定は既にprisma.config.tsで管理されているため、ここでは設定しない
-  //direct_url = env("DIRECT_URL")
 }
 
-// 例: ユーザーモデル
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   clerkId         String   @unique
   email           String   @unique
   username        String   @unique @db.VarChar(50)
   displayName     String   @map("display_name") @db.VarChar(50)
-  bio             String?  @db.Text
+  bio             String?
   profileImageUrl String?  @map("profile_image_url") @db.VarChar(255)
   coverImageUrl   String?  @map("cover_image_url") @db.VarChar(255)
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
-
-  // リレーション
-  posts          Post[]    @relation("UserPosts")
-  likes          Like[]    @relation("UserLikes")
-  followers      Follow[]  @relation("UserFollowers")
-  following      Follow[]  @relation("UserFollowing")
+  followers       Follow[] @relation("UserFollowers")
+  following       Follow[] @relation("UserFollowing")
+  likes           Like[]   @relation("UserLikes")
+  posts           Post[]   @relation("UserPosts")
 
   @@map("users")
 }
 
 model Post {
   id        String   @id @default(uuid()) @db.Uuid
-  content   String   @db.Text
+  content   String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  
-  // リレーション
   userId    String   @map("user_id") @db.Uuid
-  user      User     @relation("UserPosts", fields: [userId], references: [id], onDelete: Cascade)
   parentId  String?  @map("parent_id") @db.Uuid
+  likes     Like[]   @relation("PostLikes")
   parent    Post?    @relation("PostReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies   Post[]   @relation("PostReplies")
-  likes     Like[]   @relation("PostLikes")
+  user      User     @relation("UserPosts", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([parentId])
@@ -54,8 +47,6 @@ model Follow {
   followerId  String   @map("follower_id") @db.Uuid
   followingId String   @map("following_id") @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
-
-  // リレーション
   follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
   following   User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
 
@@ -67,11 +58,9 @@ model Like {
   userId    String   @map("user_id") @db.Uuid
   postId    String   @map("post_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
-
-  // リレーション
-  user      User     @relation("UserLikes", fields: [userId], references: [id], onDelete: Cascade)
   post      Post     @relation("PostLikes", fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserLikes", fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, postId])
   @@map("likes")
-} 
+}

@@ -7,6 +7,7 @@ import { useAuth, useClerk, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { X } from 'lucide-react';
+import { EmojiPicker } from '@/components/ui/emoji-picker';
 import { createReply, type CreateReplyState } from '@/lib/actions/posts';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -37,6 +38,7 @@ export function ReplyModal({
     initialState
   );
   const formRef = useRef<HTMLFormElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { isSignedIn } = useAuth();
   const { openSignIn } = useClerk();
   const { user } = useUser();
@@ -66,6 +68,25 @@ export function ReplyModal({
     onOpenChange(false);
     if (formRef.current) {
       formRef.current.reset();
+    }
+  };
+
+  // 絵文字を挿入する関数
+  const handleEmojiSelect = (emoji: string) => {
+    if (textareaRef.current) {
+      const textarea = textareaRef.current;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const newText = text.substring(0, start) + emoji + text.substring(end);
+      textarea.value = newText;
+      // カーソル位置を絵文字の後に移動
+      const newCursorPos = start + emoji.length;
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+      textarea.focus();
+      // フォームの値を更新（Reactの制御コンポーネントではないため、手動で更新）
+      const event = new Event('input', { bubbles: true });
+      textarea.dispatchEvent(event);
     }
   };
 
@@ -123,6 +144,7 @@ export function ReplyModal({
               </Avatar>
               <div className="flex-1">
                 <textarea
+                  ref={textareaRef}
                   name="content"
                   className="w-full min-h-[120px] resize-none bg-transparent text-lg placeholder:text-muted-foreground focus:outline-none mb-3"
                   placeholder="返信をポスト"
@@ -133,7 +155,10 @@ export function ReplyModal({
                     {state.error}
                   </div>
                 )}
-                <div className="flex items-center justify-end">
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+                    <EmojiPicker onEmojiSelect={handleEmojiSelect} />
+                  </div>
                   <Button
                     type="submit"
                     className="rounded-full font-bold px-4 h-9 text-sm shrink-0 disabled:opacity-50"

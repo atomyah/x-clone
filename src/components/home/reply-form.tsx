@@ -10,10 +10,7 @@ import { useActionState, useEffect, useRef } from 'react';
 import { useAuth, useClerk, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  ImageIcon,
-  Smile,
-} from 'lucide-react';
+import { EmojiPicker } from '@/components/ui/emoji-picker';
 import { createReply, type CreateReplyState } from '@/lib/actions/posts';
 
 const initialState: CreateReplyState | null = null;
@@ -29,6 +26,7 @@ export function ReplyForm({ postId, replyToUsername }: ReplyFormProps) {
     initialState
   );
   const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const { isSignedIn } = useAuth(); // useAuth()のisSignedInでログイン状態を確認
   const { openSignIn } = useClerk(); // useClerk()のopenSignInでログイン画面を表示
   const { user } = useUser(); // useUser()のuserでユーザー情報を取得
@@ -48,6 +46,25 @@ export function ReplyForm({ postId, replyToUsername }: ReplyFormProps) {
         redirectUrl: window.location.href,
       });
       return;
+    }
+  };
+
+  // 絵文字を挿入する関数
+  const handleEmojiSelect = (emoji: string) => {
+    if (inputRef.current) {
+      const input = inputRef.current;
+      const start = input.selectionStart || 0;
+      const end = input.selectionEnd || 0;
+      const text = input.value;
+      const newText = text.substring(0, start) + emoji + text.substring(end);
+      input.value = newText;
+      // カーソル位置を絵文字の後に移動
+      const newCursorPos = start + emoji.length;
+      input.setSelectionRange(newCursorPos, newCursorPos);
+      input.focus();
+      // フォームの値を更新（Reactの制御コンポーネントではないため、手動で更新）
+      const event = new Event('input', { bubbles: true });
+      input.dispatchEvent(event);
     }
   };
 
@@ -74,6 +91,7 @@ export function ReplyForm({ postId, replyToUsername }: ReplyFormProps) {
           </Avatar>
           <div className="flex-1">
             <input
+              ref={inputRef}
               type="text"
               name="content"
               className="w-full bg-transparent text-2xl placeholder:text-muted-foreground focus:outline-none mb-3 py-5 min-h-[60px]"
@@ -87,33 +105,7 @@ export function ReplyForm({ postId, replyToUsername }: ReplyFormProps) {
             )}
             <div className="flex items-center justify-between">
               <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-primary hover:bg-primary/10 shrink-0"
-                  title="メディア"
-                >
-                  <ImageIcon className="w-5 h-5" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-primary hover:bg-primary/10 shrink-0"
-                  title="GIF画像"
-                >
-                  <div className="w-5 h-5 flex items-center justify-center text-xs font-bold">GIF</div>
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-primary hover:bg-primary/10 shrink-0"
-                  title="絵文字"
-                >
-                  <Smile className="w-5 h-5" />
-                </Button>
+                <EmojiPicker onEmojiSelect={handleEmojiSelect} />
               </div>
               <Button
                 type="submit"

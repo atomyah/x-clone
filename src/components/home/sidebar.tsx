@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRef, useEffect } from 'react';
 import { useUser, useAuth, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -20,6 +21,24 @@ interface SidebarProps {
 export function Sidebar({ className }: SidebarProps) {
   const { user, isLoaded } = useUser();
   const { isSignedIn } = useAuth();
+  const userButtonContainerRef = useRef<HTMLDivElement>(null);
+  const userButtonTriggerRef = useRef<HTMLElement | null>(null);
+
+  // UserButtonのトリガー要素を取得
+  useEffect(() => {
+    const findTrigger = () => {
+      const trigger = userButtonContainerRef.current?.querySelector('[data-clerk-element="userButtonTrigger"]') as HTMLElement;
+      if (trigger) {
+        userButtonTriggerRef.current = trigger;
+      } else {
+        // トリガーが見つからない場合、少し待ってから再試行
+        setTimeout(findTrigger, 100);
+      }
+    };
+    if (isLoaded && isSignedIn) {
+      findTrigger();
+    }
+  }, [isLoaded, isSignedIn]);
 
   const displayName = user
     ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.emailAddresses[0]?.emailAddress?.split('@')[0] || 'ユーザー'
@@ -101,23 +120,42 @@ export function Sidebar({ className }: SidebarProps) {
       </Button>
 
       <SignedIn>
-        <div className="w-full relative">
-          <button
-            type="button"
-            className="w-full flex items-center gap-3 h-10 lg:h-16 rounded-full hover:bg-muted/50 px-2 lg:px-3 transition-colors"
-            onClick={(e) => {
-              const userButtonTrigger = e.currentTarget.querySelector('[data-clerk-element="userButtonTrigger"]') as HTMLElement;
-              if (userButtonTrigger) {
-                userButtonTrigger.click();
+        <button
+          type="button"
+          className="w-full flex items-center gap-3 h-10 lg:h-16 rounded-full hover:bg-muted/50 px-2 lg:px-3 transition-colors"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            // 少し遅延を入れて、DOMが完全にレンダリングされた後にトリガーを探す
+            setTimeout(() => {
+              // まずuseRefで保存されたトリガーを試す
+              if (userButtonTriggerRef.current) {
+                userButtonTriggerRef.current.click();
+                return;
               }
-            }}
-          >
-            <div className="shrink-0">
+              // 見つからない場合、直接検索
+              const trigger = userButtonContainerRef.current?.querySelector('[data-clerk-element="userButtonTrigger"]') as HTMLElement;
+              if (trigger) {
+                trigger.click();
+                userButtonTriggerRef.current = trigger;
+              } else {
+                // まだ見つからない場合、document全体から検索
+                const globalTrigger = document.querySelector('[data-clerk-element="userButtonTrigger"]') as HTMLElement;
+                if (globalTrigger) {
+                  globalTrigger.click();
+                  userButtonTriggerRef.current = globalTrigger;
+                }
+              }
+            }, 0);
+          }}
+        >
+          <div ref={userButtonContainerRef} className="h-10 w-10 lg:h-14 lg:w-14 shrink-0 relative rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center justify-center group">
+            <div className="absolute inset-0 z-10 opacity-0 pointer-events-auto">
               <UserButton
                 appearance={{
                   elements: {
-                    rootBox: "h-7 w-7 lg:h-10 lg:w-10",
-                    userButtonTrigger: "h-7 w-7 lg:h-10 lg:w-10 rounded-full",
+                    rootBox: "h-9 w-9 lg:h-11 lg:w-11",
+                    userButtonTrigger: "h-9 w-9 lg:h-11 lg:w-11 rounded-full",
                     userButtonPopoverCard: "shadow-lg",
                     userButtonPopoverActions: "p-2",
                     userButtonPopoverActionButton: "hover:bg-muted rounded-md",
@@ -125,19 +163,25 @@ export function Sidebar({ className }: SidebarProps) {
                 }}
               />
             </div>
-            {isLoaded && (
-              <>
-                <div className="hidden lg:flex flex-col items-start text-sm flex-1 pointer-events-none">
-                  <span className="font-semibold">{displayName}</span>
-                  <span className="text-xs text-muted-foreground">
-                    @{username}
-                  </span>
-                </div>
-                <MoreHorizontal className="size-7 shrink-0 hidden lg:block pointer-events-none" />
-              </>
-            )}
-          </button>
-        </div>
+            <Avatar className="h-9 w-9 lg:h-12 lg:w-12 shrink-0 relative z-0 pointer-events-none transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:ring-2 group-hover:ring-primary/30">
+              <AvatarImage src={user?.imageUrl} />
+              <AvatarFallback>
+                {user?.firstName?.[0] || user?.emailAddresses[0]?.emailAddress?.[0] || 'U'}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+          {isLoaded && (
+            <>
+              <div className="hidden lg:flex flex-col items-start text-sm flex-1">
+                <span className="font-semibold">{displayName}</span>
+                <span className="text-xs text-muted-foreground">
+                  @{username}
+                </span>
+              </div>
+              <MoreHorizontal className="size-7 shrink-0 hidden lg:block" />
+            </>
+          )}
+        </button>
       </SignedIn>
       <SignedOut>
         <Button
@@ -147,8 +191,8 @@ export function Sidebar({ className }: SidebarProps) {
           asChild
         >
           <Link href="/sign-in">
-            <div className="flex items-center gap-3 flex-1 justify-center lg:justify-start">
-              <Avatar className="h-7 w-7 lg:h-10 lg:w-10 shrink-0">
+            <div className="flex items-center gap-3 flex-1 justify-center lg:justify-start group">
+              <Avatar className="h-6 w-6 lg:h-9 lg:w-9 shrink-0 transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:ring-2 group-hover:ring-primary/30">
                 <AvatarFallback>?</AvatarFallback>
               </Avatar>
               <div className="hidden lg:flex flex-col items-start text-sm">
