@@ -89,7 +89,7 @@ export function PostForm() {
               </div>
               <Button
                 type="submit"
-                className="rounded-full font-bold px-4 md:px-6 text-sm md:text-base ml-auto shrink-0"
+                className="rounded-full font-bold px-4 md:px-6 text-sm md:text-base ml-auto shrink-0 bg-zinc-800 text-white transition-colors duration-200 hover:bg-zinc-700 hover:shadow-md hover:shadow-zinc-900/20"
                 disabled={isPending}
               >
                 {isPending ? '投稿中...' : 'ポストする'}

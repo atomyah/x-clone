@@ -8,7 +8,7 @@ interface LiveEventsProps {
 export function LiveEvents({ events }: LiveEventsProps) {
   return (
     <div className="p-4">
-      <h2 className="font-bold text-xl mb-4">Xでライブ放送する</h2>
+      <h2 className="font-bold text-xl mb-4 text-zinc-400 dark:text-zinc-500">Xでライブ放送する</h2>
       {events.map((event) => (
         <div
           key={event.id}
@@ -32,14 +32,14 @@ export function LiveEvents({ events }: LiveEventsProps) {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-sm">
+              <p className="font-bold text-sm text-zinc-400 dark:text-zinc-500">
                 {event.user}
-                <span className="text-muted-foreground font-normal">
+                <span className="text-zinc-400/90 dark:text-zinc-500 font-normal">
                   {' '}
                   {event.status}
                 </span>
               </p>
-              <p className="text-sm text-muted-foreground truncate">
+              <p className="text-sm text-zinc-400/90 dark:text-zinc-500 truncate">
                 {event.title}
               </p>
             </div>

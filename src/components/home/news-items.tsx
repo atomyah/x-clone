@@ -13,7 +13,7 @@ export function NewsItems({ items }: NewsItemsProps) {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-bold text-xl">本日のニュース</h2>
+        <h2 className="font-bold text-xl text-zinc-400 dark:text-zinc-500">本日のニュース</h2>
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <X className="w-4 h-4" />
         </Button>
@@ -29,10 +29,10 @@ export function NewsItems({ items }: NewsItemsProps) {
               <AvatarFallback>N</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium leading-snug">
+              <p className="text-sm font-medium leading-snug text-zinc-400 dark:text-zinc-500">
                 {item.title}
               </p>
-              <p className="text-xs text-muted-foreground">{item.status}</p>
+              <p className="text-xs text-zinc-400/90 dark:text-zinc-500">{item.status}</p>
             </div>
           </div>
         </div>

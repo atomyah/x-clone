@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef, useEffect } from 'react';
-import { useUser, useAuth, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { useEffect, useRef, useState } from 'react';
+import { useUser, useAuth, SignedIn, SignedOut, SignInButton, useClerk } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -12,6 +12,8 @@ import {
   BookmarkIcon,
   UserCircle,
   MoreHorizontal,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -21,24 +23,9 @@ interface SidebarProps {
 export function Sidebar({ className }: SidebarProps) {
   const { user, isLoaded } = useUser();
   const { isSignedIn } = useAuth();
-  const userButtonContainerRef = useRef<HTMLDivElement>(null);
-  const userButtonTriggerRef = useRef<HTMLElement | null>(null);
-
-  // UserButtonのトリガー要素を取得
-  useEffect(() => {
-    const findTrigger = () => {
-      const trigger = userButtonContainerRef.current?.querySelector('[data-clerk-element="userButtonTrigger"]') as HTMLElement;
-      if (trigger) {
-        userButtonTriggerRef.current = trigger;
-      } else {
-        // トリガーが見つからない場合、少し待ってから再試行
-        setTimeout(findTrigger, 100);
-      }
-    };
-    if (isLoaded && isSignedIn) {
-      findTrigger();
-    }
-  }, [isLoaded, isSignedIn]);
+  const clerk = useClerk();
+  const [isLogoutMenuOpen, setIsLogoutMenuOpen] = useState(false);
+  const logoutMenuRef = useRef<HTMLDivElement>(null);
 
   const displayName = user
     ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.emailAddresses[0]?.emailAddress?.split('@')[0] || 'ユーザー'
@@ -52,6 +39,32 @@ export function Sidebar({ className }: SidebarProps) {
   const handleProfileClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // 親要素のクリックイベントを防ぐ
   };
+
+  const openClerkUserMenu = () => {
+    clerk.openUserProfile();
+  };
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!logoutMenuRef.current) return;
+      if (!logoutMenuRef.current.contains(event.target as Node)) {
+        setIsLogoutMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsLogoutMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
 
   return (
     <aside className={`w-[55px] lg:w-[230px] h-screen sticky top-0 px-1 lg:px-3 py-4 flex flex-col items-center lg:items-stretch shrink-0 ${className || ''}`}>
@@ -112,12 +125,49 @@ export function Sidebar({ className }: SidebarProps) {
         </Button>
       </nav>
 
-      <Button className="w-full h-10 lg:h-12 rounded-full font-bold mb-4 text-base lg:text-lg justify-center lg:justify-center"
-              title="ポストする"
-      >
-        <span className="hidden lg:inline">ポストする</span>
-        <span className="lg:hidden text-lg">+</span>
-      </Button>
+      <SignedOut>
+        <SignInButton mode="modal">
+          <Button
+            className="w-12 h-12 lg:w-full lg:h-12 rounded-full font-bold mb-4 text-sm lg:text-base justify-center p-0 lg:px-4 bg-zinc-800 text-white transition-colors duration-200 hover:bg-zinc-700 hover:shadow-md hover:shadow-zinc-900/20"
+            title="ログイン／サインアップ"
+            type="button"
+          >
+            <LogIn className="size-5 lg:hidden" />
+            <span className="hidden lg:inline">ログイン(あるいは入会)</span>
+          </Button>
+        </SignInButton>
+      </SignedOut>
+      <SignedIn>
+        <div className="relative mb-4" ref={logoutMenuRef}>
+          <Button
+            className="w-12 h-12 lg:w-full lg:h-12 rounded-full font-bold text-sm lg:text-base justify-center p-0 lg:px-4 bg-zinc-800 text-white transition-colors duration-200 hover:bg-zinc-700 hover:shadow-md hover:shadow-zinc-900/20"
+            title="ログアウト"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsLogoutMenuOpen((prev) => !prev);
+            }}
+          >
+            <LogOut className="size-5 lg:hidden" />
+            <span className="hidden lg:inline">ログアウト</span>
+          </Button>
+          {isLogoutMenuOpen && (
+            <div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 lg:left-0 lg:translate-x-0 min-w-[150px] rounded-xl bg-background shadow-xl shadow-black/20 dark:shadow-black/50 p-1">
+              <button
+                type="button"
+                className="w-full text-left text-sm px-3 py-2 rounded-lg hover:bg-muted/60 transition-colors"
+                onClick={() => {
+                  setIsLogoutMenuOpen(false);
+                  clerk.signOut();
+                }}
+              >
+                ログアウトする
+              </button>
+            </div>
+          )}
+        </div>
+      </SignedIn>
 
       <SignedIn>
         <button
@@ -126,43 +176,10 @@ export function Sidebar({ className }: SidebarProps) {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            // 少し遅延を入れて、DOMが完全にレンダリングされた後にトリガーを探す
-            setTimeout(() => {
-              // まずuseRefで保存されたトリガーを試す
-              if (userButtonTriggerRef.current) {
-                userButtonTriggerRef.current.click();
-                return;
-              }
-              // 見つからない場合、直接検索
-              const trigger = userButtonContainerRef.current?.querySelector('[data-clerk-element="userButtonTrigger"]') as HTMLElement;
-              if (trigger) {
-                trigger.click();
-                userButtonTriggerRef.current = trigger;
-              } else {
-                // まだ見つからない場合、document全体から検索
-                const globalTrigger = document.querySelector('[data-clerk-element="userButtonTrigger"]') as HTMLElement;
-                if (globalTrigger) {
-                  globalTrigger.click();
-                  userButtonTriggerRef.current = globalTrigger;
-                }
-              }
-            }, 0);
+            openClerkUserMenu();
           }}
         >
-          <div ref={userButtonContainerRef} className="h-10 w-10 lg:h-14 lg:w-14 shrink-0 relative rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center justify-center group">
-            <div className="absolute inset-0 z-10 opacity-0 pointer-events-auto">
-              <UserButton
-                appearance={{
-                  elements: {
-                    rootBox: "h-9 w-9 lg:h-11 lg:w-11",
-                    userButtonTrigger: "h-9 w-9 lg:h-11 lg:w-11 rounded-full",
-                    userButtonPopoverCard: "shadow-lg",
-                    userButtonPopoverActions: "p-2",
-                    userButtonPopoverActionButton: "hover:bg-muted rounded-md",
-                  },
-                }}
-              />
-            </div>
+          <div className="h-10 w-10 lg:h-14 lg:w-14 shrink-0 relative rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center justify-center group">
             <Avatar className="h-9 w-9 lg:h-12 lg:w-12 shrink-0 relative z-0 pointer-events-none transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:ring-2 group-hover:ring-primary/30">
               <AvatarImage src={user?.imageUrl} />
               <AvatarFallback>
