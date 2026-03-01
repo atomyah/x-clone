@@ -119,6 +119,12 @@ export type CreateReplyState = {
   error?: string;
 };
 
+export type CreateQuoteRepostState = {
+  success: boolean;
+  postId?: string;
+  error?: string;
+};
+
 /**
  * useActionState用の返信作成ServerAction
  * @param prevState 前回の状態
@@ -204,6 +210,81 @@ export async function createReply(
     return {
       success: false,
       error: '返信に失敗しました。もう一度お試しください。',
+    };
+  }
+}
+
+/**
+ * useActionState用の引用付きリポスト作成ServerAction
+ * @param prevState 前回の状態
+ * @param formData フォームデータ（content, quotedPostIdを含む）
+ * @returns 引用付きリポスト作成結果の状態
+ */
+export async function createQuoteRepost(
+  prevState: CreateQuoteRepostState | null,
+  formData: FormData
+): Promise<CreateQuoteRepostState> {
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return {
+        success: false,
+        error: '認証が必要です。ログインしてください。',
+      };
+    }
+
+    const content = (formData.get('content') as string) || '';
+    const quotedPostId = formData.get('quotedPostId') as string;
+    if (!quotedPostId) {
+      return {
+        success: false,
+        error: '引用元の投稿情報が不足しています。',
+      };
+    }
+
+    const quotedPost = await prisma.post.findUnique({
+      where: { id: quotedPostId },
+      select: { id: true },
+    });
+
+    if (!quotedPost) {
+      return {
+        success: false,
+        error: '引用元の投稿が見つかりません。',
+      };
+    }
+
+    const trimmedContent = content.trim();
+    if (trimmedContent.length > 1000) {
+      return {
+        success: false,
+        error: '投稿内容は1,000文字以内で入力してください。',
+      };
+    }
+
+    const post = await prisma.post.create({
+      data: {
+        content: trimmedContent,
+        userId,
+        quotedPostId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    revalidatePath('/');
+    revalidatePath(`/posts/${quotedPostId}`);
+
+    return {
+      success: true,
+      postId: post.id,
+    };
+  } catch (error) {
+    console.error('引用付きリポスト作成エラー:', error);
+    return {
+      success: false,
+      error: '引用付きリポストに失敗しました。もう一度お試しください。',
     };
   }
 }

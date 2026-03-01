@@ -25,7 +25,7 @@ export function RightSidebar({ liveEvents, newsItems, className }: RightSidebarP
             サブスクライブして新機能を利用しましょう。資格を満たしている場合、収益配分を受け取れます。
           </p>
           <Button className="w-full rounded-full font-bold bg-zinc-600 text-white hover:bg-zinc-700">
-            購入させぬ！
+            購入は…させぬ
           </Button>
         </div>
       </Card>

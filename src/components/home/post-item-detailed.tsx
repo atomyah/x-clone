@@ -16,7 +16,6 @@ import {
   MoreHorizontal,
   Heart,
   MessageCircle,
-  Repeat2,
   Share,
   Pin,
   Bookmark,
@@ -26,6 +25,7 @@ import type { Post, PostWithReplies } from '@/types/post';
 import { formatDetailDateTime } from '@/lib/format-date';
 import { toggleLike } from '@/lib/actions/posts';
 import { ReplyModal } from '@/components/home/reply-modal';
+import { QuoteRepostButton } from '@/components/home/quote-repost-button';
 
 interface PostItemDetailedProps {
   post: Post | PostWithReplies;
@@ -125,6 +125,16 @@ export function PostItemDetailed({ post, showReplies = false, clickable = false 
           <p className="text-base mb-3 leading-normal">
             {post.content}
           </p>
+
+          {post.quotedPost && (
+            <div className="mb-3 rounded-xl border border-transparent bg-zinc-200/55 dark:bg-zinc-800/55 p-3 transition-colors duration-200 hover:bg-zinc-200/70 dark:hover:bg-zinc-800/80">
+              <div className="flex items-center gap-2 mb-1 min-w-0">
+                <span className="font-bold text-sm truncate">{post.quotedPost.user.name}</span>
+                <span className="text-xs text-muted-foreground shrink-0">{post.quotedPost.user.username}</span>
+              </div>
+              <p className="text-sm text-foreground wrap-break-word">{post.quotedPost.content}</p>
+            </div>
+          )}
           
           {/* タイムスタンプと表示数 */}
           {dateTime && (
@@ -178,16 +188,14 @@ export function PostItemDetailed({ post, showReplies = false, clickable = false 
               <MessageCircle className="w-4 h-4" />
               <span>{repliesCount}</span>
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 gap-2 hover:text-green-600 hover:bg-green-600/10"
-              title="リポスト"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Repeat2 className="w-4 h-4" />
-              <span>{post.retweets}</span>
-            </Button>
+            <QuoteRepostButton
+              postId={post.uuid}
+              retweets={post.retweets}
+              quotedToUsername={post.user.username}
+              quotedToName={post.user.name}
+              quotedToContent={post.content}
+              quotedToAvatar={post.user.avatar}
+            />
             <Button
               variant="ghost"
               size="sm"

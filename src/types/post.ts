@@ -4,6 +4,14 @@ export interface User {
   avatar: string;
 }
 
+export interface QuotedPost {
+  uuid?: string;
+  user: User;
+  timestamp: string;
+  createdAt?: Date | string;
+  content: string;
+}
+
 export interface Post {
   id: number;
   uuid?: string; // データベースのUUID（詳細ページへのリンク用）
@@ -11,6 +19,7 @@ export interface Post {
   timestamp: string;
   createdAt?: Date | string; // 元の日時（詳細ページでの完全な日時表示用）
   content: string;
+  quotedPost?: QuotedPost;
   images?: string[];
   hasLink?: boolean;
   link?: string;

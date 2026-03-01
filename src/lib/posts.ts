@@ -34,8 +34,13 @@ import { prisma } from './prisma';
 import { auth } from '@clerk/nextjs/server';
 import type { Post as PrismaPost, User as PrismaUser } from '@prisma/client';
 
+export type QuotedPostWithUser = PrismaPost & {
+  user: PrismaUser;
+};
+
 export type PostWithUser = PrismaPost & {
   user: PrismaUser;
+  quotedPost?: QuotedPostWithUser | null;
   _count?: {
     likes: number;
     replies: number;
@@ -86,6 +91,11 @@ export async function getTimelinePosts(): Promise<PostWithUser[]> {
       },
       include: {
         user: true,
+        quotedPost: {
+          include: {
+            user: true,
+          },
+        },
         _count: {
           select: {
             likes: true,
@@ -141,6 +151,11 @@ export async function getUserPosts(userId: string): Promise<PostWithUser[]> {
       },
       include: {
         user: true,
+        quotedPost: {
+          include: {
+            user: true,
+          },
+        },
         _count: {
           select: {
             likes: true,
@@ -194,9 +209,19 @@ export async function getPostWithReplies(postId: string): Promise<PostWithReplie
       },
       include: {
         user: true,
+        quotedPost: {
+          include: {
+            user: true,
+          },
+        },
         replies: {
           include: {
             user: true,
+            quotedPost: {
+              include: {
+                user: true,
+              },
+            },
             _count: {
               select: {
                 likes: true,

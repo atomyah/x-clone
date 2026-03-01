@@ -14,13 +14,13 @@ import {
   MoreHorizontal,
   Heart,
   MessageCircle,
-  Repeat2,
   Share,
   Pin,
 } from 'lucide-react';
 import type { Post } from '@/types/post';
 import { toggleLike } from '@/lib/actions/posts';
 import { ReplyModal } from '@/components/home/reply-modal';
+import { QuoteRepostButton } from '@/components/home/quote-repost-button';
 
 interface PostItemProps {
   post: Post;
@@ -120,6 +120,16 @@ export function PostItem({ post }: PostItemProps) {
               {post.content}
             </p>
 
+            {post.quotedPost && (
+              <div className="mb-3 rounded-xl border border-transparent bg-zinc-200/55 dark:bg-zinc-800/55 p-3 transition-colors duration-200 hover:bg-zinc-200/70 dark:hover:bg-zinc-800/80">
+                <div className="flex items-center gap-2 mb-1 min-w-0">
+                  <span className="font-bold text-sm truncate">{post.quotedPost.user.name}</span>
+                  <span className="text-xs text-muted-foreground shrink-0">{post.quotedPost.user.username}</span>
+                </div>
+                <p className="text-sm text-foreground wrap-break-word">{post.quotedPost.content}</p>
+              </div>
+            )}
+
             {post.images && post.images.length > 0 && (
               <div className="mb-3 rounded-2xl overflow-hidden border border-muted relative w-full aspect-auto max-h-96">
                 <Image
@@ -155,16 +165,14 @@ export function PostItem({ post }: PostItemProps) {
                 <MessageCircle className="w-4 h-4" />
                 <span>{post.replies}</span>
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-2 hover:text-green-600 hover:bg-green-600/10"
-                title="リポスト"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Repeat2 className="w-4 h-4" />
-                <span>{post.retweets}</span>
-              </Button>
+              <QuoteRepostButton
+                postId={post.uuid}
+                retweets={post.retweets}
+                quotedToUsername={post.user.username}
+                quotedToName={post.user.name}
+                quotedToContent={post.content}
+                quotedToAvatar={post.user.avatar}
+              />
               <Button
                 variant="ghost"
                 size="sm"
