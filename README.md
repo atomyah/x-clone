@@ -152,9 +152,91 @@ XのようなSNSアプリケーションをWeb上で開発する。
 
 ---
 
-## システムアーキテクチャ図
+## ディレクトリ構造
 
-![Decision Path Option-2025-12-23-061319.png](./images/Decision_Path_Option-2025-12-23-061319.png)
+x-clone/
+├── 📁 src/                          # ソースコードのルートディレクトリ
+│   ├── 📁 app/                      # Next.js App Router（ページとルーティング）
+│   │   ├── 📄 layout.tsx            # ルートレイアウト
+│   │   ├── 📄 page.tsx              # ホームページ（/）
+│   │   ├── 📄 globals.css           # グローバルスタイル
+│   │   ├── 📁 api/                  # API Routes
+│   │   │   ├── 📁 webhooks/         # Webhookエンドポイント（Clerk連携）
+│   │   │   └── 📁 test/             # テスト用API
+│   │   ├── 📁 profile/              # プロフィール関連ページ
+│   │   │   ├── 📄 page.tsx          # プロフィール一覧（/profile）
+│   │   │   └── 📁 [username]/       # 動的ルート（ユーザー別プロフィール）
+│   │   │       ├── 📄 page.tsx      # プロフィール詳細ページ
+│   │   │       └── 📁 @modal/       # インターセプティングルート（モーダル）
+│   │   │           └── 📁 (.)edit/  # プロフィール編集モーダル
+│   │   ├── 📁 posts/                # 投稿関連ページ
+│   │   ├── 📁 sign-in/              # ログインページ
+│   │   ├── 📁 sign-up/              # サインアップページ
+│   │   └── 📁 user/                 # ユーザー関連ページ
+│   │
+│   ├── 📁 components/               # Reactコンポーネント
+│   │   ├── 📁 home/                 # ホーム画面用コンポーネント
+│   │   │   ├── sidebar.tsx          # サイドバー
+│   │   │   ├── right-sidebar.tsx    # 右サイドバー
+│   │   │   ├── post-form.tsx        # 投稿フォーム
+│   │   │   ├── post-item.tsx        # 投稿アイテム（簡易版）
+│   │   │   ├── post-item-detailed.tsx # 投稿アイテム（詳細版）
+│   │   │   ├── post-list.tsx        # 投稿リスト
+│   │   │   ├── reply-form.tsx       # 返信フォーム
+│   │   │   ├── reply-modal.tsx      # 返信モーダル
+│   │   │   ├── live-events.tsx      # ライブイベント
+│   │   │   ├── news-items.tsx       # ニュースアイテム
+│   │   │   └── mobile-nav.tsx       # モバイルナビゲーション
+│   │   │
+│   │   ├── 📁 profile/              # プロフィール関連コンポーネント
+│   │   │   ├── profile-header.tsx   # プロフィールヘッダー
+│   │   │   ├── profile-info.tsx     # プロフィール情報
+│   │   │   ├── profile-edit-form.tsx # プロフィール編集フォーム
+│   │   │   ├── profile-tabs.tsx     # プロフィールタブ
+│   │   │   └── profile-timeline.tsx # プロフィールタイムライン
+│   │   │
+│   │   └── 📁 ui/                   # shadcn/uiコンポーネント
+│   │       ├── avatar.tsx           # アバター
+│   │       ├── button.tsx           # ボタン
+│   │       ├── card.tsx             # カード
+│   │       ├── dialog.tsx            # ダイアログ（モーダル）
+│   │       ├── input.tsx             # 入力フィールド
+│   │       └── tabs.tsx              # タブ
+│   │
+│   ├── 📁 lib/                      # ライブラリ・ユーティリティ
+│   │   ├── 📁 actions/               # Server Actions（データ書き込み）
+│   │   │   ├── posts.ts             # 投稿関連のServer Actions
+│   │   │   └── users.ts             # ユーザー関連のServer Actions
+│   │   ├── prisma.ts                # Prismaクライアント
+│   │   ├── supabase.ts              # Supabaseクライアント
+│   │   ├── storage.ts               # Supabase Storage（画像アップロード）
+│   │   ├── users.ts                 # ユーザー関連のデータアクセス層（読み取り）
+│   │   ├── posts.ts                 # 投稿関連のデータアクセス層（読み取り）
+│   │   ├── mappers.ts               # データ変換層（DB → UI）
+│   │   ├── format-date.ts           # 日付フォーマット
+│   │   └── utils.ts                 # 汎用ユーティリティ
+│   │
+│   ├── 📁 types/                    # TypeScript型定義
+│   └── 📄 proxy.ts                  # Clerk認証ミドルウェア
+│
+├── 📁 prisma/                       # Prisma関連ファイル
+│   ├── schema.prisma                # データベーススキーマ定義
+│   ├── 📁 migrations/               # データベースマイグレーション
+│   ├── seed.sql                     # シードデータ
+│   └── SEED_README.md               # シードデータの説明
+│
+├── 📁 public/                       # 静的ファイル（画像、アイコンなど）
+├── 📁 node_modules/                 # npmパッケージ
+│
+├── 📄 package.json                  # プロジェクトの依存関係とスクリプト
+├── 📄 tsconfig.json                 # TypeScript設定
+├── 📄 next.config.ts                # Next.js設定（画像最適化など）
+├── 📄 tailwind.config.ts            # Tailwind CSS設定
+├── 📄 postcss.config.mjs            # PostCSS設定
+├── 📄 components.json               # shadcn/ui設定
+├── 📄 eslint.config.mjs             # ESLint設定
+├── 📄 prisma.config.ts              # Prisma設定
+└── 📄 [README.md](http://readme.md/)                     # プロジェクト説明書
 
 ---
 
