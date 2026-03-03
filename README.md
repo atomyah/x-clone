@@ -153,7 +153,7 @@ XのようなSNSアプリケーションをWeb上で開発する。
 ---
 
 ## ディレクトリ構造
-
+```
 x-clone/
 ├── 📁 src/                          # ソースコードのルートディレクトリ
 │   ├── 📁 app/                      # Next.js App Router（ページとルーティング）
@@ -237,6 +237,7 @@ x-clone/
 ├── 📄 eslint.config.mjs             # ESLint設定
 ├── 📄 prisma.config.ts              # Prisma設定
 └── 📄 [README.md](http://readme.md/)                     # プロジェクト説明書
+```
 
 ---
 
