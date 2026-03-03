@@ -2,6 +2,7 @@ import { Sidebar } from '@/components/home/sidebar';
 import { RightSidebar } from '@/components/home/right-sidebar';
 import { PostForm } from '@/components/home/post-form';
 import { PostList } from '@/components/home/post-list';
+import { WebhookSyncStatus } from '@/components/home/webhook-sync-status';
 import { getTimelinePosts } from '@/lib/posts';
 import { mapPostsToUI } from '@/lib/mappers';
 import type { Post, LiveEvent, NewsItem } from '@/types/post';
@@ -60,8 +61,9 @@ export default async function Home() {
         <Sidebar />
 
         <main className="flex-1 md:max-w-[600px] min-w-0">
-          <div className="sticky top-0 bg-background/80 backdrop-blur-sm z-10 px-4 py-3">
+          <div className="sticky top-0 bg-background/80 backdrop-blur-sm z-10 px-4 py-3 flex items-center justify-between gap-3">
             <h1 className="text-xl font-bold">ホーム</h1>
+            <WebhookSyncStatus />
           </div>
           
           <PostForm />

@@ -30,6 +30,13 @@ export type UserWithCounts = User & {
   };
 };
 
+export type WebhookSyncStatus = {
+  isSignedIn: boolean;
+  isSynced: boolean;
+  clerkId?: string;
+  dbUserId?: string;
+};
+
 /**
  * Clerkの認証情報からデータベースのユーザーIDを取得
  * @returns データベースのユーザーID（認証されていない場合はnull）
@@ -52,6 +59,41 @@ export async function getCurrentUserId(): Promise<string | null> {
   } catch (error) {
     console.error('ユーザーID取得エラー:', error);
     return null;
+  }
+}
+
+/**
+ * ClerkユーザーとDBユーザーの同期状態を確認
+ * 読み取り専用: データ作成/更新は行わない
+ */
+export async function getWebhookSyncStatus(): Promise<WebhookSyncStatus> {
+  try {
+    const { userId: clerkId } = await auth();
+
+    if (!clerkId) {
+      return {
+        isSignedIn: false,
+        isSynced: false,
+      };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { clerkId },
+      select: { id: true },
+    });
+
+    return {
+      isSignedIn: true,
+      isSynced: !!user,
+      clerkId,
+      dbUserId: user?.id,
+    };
+  } catch (error) {
+    console.error('Webhook同期状態確認エラー:', error);
+    return {
+      isSignedIn: false,
+      isSynced: false,
+    };
   }
 }
 

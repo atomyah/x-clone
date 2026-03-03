@@ -1,17 +1,9 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+// 未ログインでも全ページ閲覧でき、投稿/返信/リポスト/いいねは既存のServer Action側の認証チェックで制御される。
 
-const isPublicRoute = createRouteMatcher([
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/',
-  '/api/webhooks/clerk'
-])
+import { clerkMiddleware } from '@clerk/nextjs/server'
 
-export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    await auth.protect()
-  }
-})
+// 閲覧は全ページ公開。認証必須の操作はServer Actions側で判定する。
+export default clerkMiddleware()
 
 export const config = {
   matcher: [
