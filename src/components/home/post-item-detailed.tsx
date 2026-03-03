@@ -127,7 +127,7 @@ export function PostItemDetailed({ post, showReplies = false, clickable = false 
           </p>
 
           {post.quotedPost && (
-            <div className="mb-3 rounded-xl border border-transparent bg-zinc-200/55 dark:bg-zinc-800/55 p-3 transition-colors duration-200 hover:bg-zinc-200/70 dark:hover:bg-zinc-800/80">
+            <div className="mb-3 rounded-xl border border-sky-300/55 bg-zinc-100/55 dark:bg-zinc-800/55 p-3">
               <div className="flex items-center gap-2 mb-1 min-w-0">
                 <span className="font-bold text-sm truncate">{post.quotedPost.user.name}</span>
                 <span className="text-xs text-muted-foreground shrink-0">{post.quotedPost.user.username}</span>
