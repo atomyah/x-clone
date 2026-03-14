@@ -94,14 +94,6 @@ VALUES
   
   -- 鈴木花子の投稿
   (
-    'b3333333-3333-4333-a333-333333333333'::uuid,
-    'Figmaで新しいデザインシステムを作成中です。コンポーネントの再利用性を高めて、開発効率を上げたいですね。',
-    'b1ffcd99-9c0b-4ef8-bb6d-6bb9bd380a22'::uuid,
-    NULL,
-    NOW() - INTERVAL '4 days',
-    NOW() - INTERVAL '4 days'
-  ),
-  (
     'b4444444-4444-4444-a444-444444444444'::uuid,
     'Tailwind CSSの新しいv4が素晴らしいです！パフォーマンスが大幅に改善されました。',
     'b1ffcd99-9c0b-4ef8-bb6d-6bb9bd380a22'::uuid,
@@ -165,14 +157,6 @@ VALUES
     NOW() - INTERVAL '2 days' - INTERVAL '3 hours',
     NOW() - INTERVAL '2 days' - INTERVAL '3 hours'
   ),
-  (
-    'f3333333-3333-4333-a333-333333333333'::uuid,
-    'デザインシステム、ぜひ見せてください！参考にしたいです。',
-    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
-    'b3333333-3333-4333-a333-333333333333'::uuid,
-    NOW() - INTERVAL '3 days' - INTERVAL '5 hours',
-    NOW() - INTERVAL '3 days' - INTERVAL '5 hours'
-  );
 
 -- フォロー関係
 INSERT INTO follows (follower_id, following_id, created_at)

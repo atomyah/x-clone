@@ -1,3 +1,5 @@
+// 退会方法ページ
+
 import Image from 'next/image';
 import { Sidebar } from '@/components/home/sidebar';
 
@@ -11,38 +13,38 @@ import taikai7 from '../../../images/taikai/taikai_7.png';
 
 const steps = [
   {
-    title: '1. 左下のプロフィールアイコンをクリック',
-    description: 'サイドバー下部のプロフィール行から、アカウント設定を開きます。',
+    title: '1. 画面左下のアバターアイコンをクリック',
+    description: 'サイドバー下部にあるアバターアイコンをクリックして、アカウント設定を開きます。',
     image: taikai1,
   },
   {
-    title: '2. 「セキュリティ」タブを選択',
-    description: 'アカウント管理メニューで「セキュリティ」に移動します。',
+    title: '2. Clerk管理画面が開きます。',
+    description: 'Clerk管理画面で「セキュリティ」タブをクリックして移動します。',
     image: taikai2,
   },
   {
     title: '3. 「アカウントの削除」をクリック',
-    description: 'セキュリティ画面の下部にある削除アクションを選択します。',
+    description: 'セキュリティ画面の下部にある「アカウントの削除」をクリックします。',
     image: taikai3,
   },
   {
     title: '4. 確認入力欄に「アカウント削除」と入力',
-    description: '確認ダイアログが表示されたら、指定テキストを入力します。',
+    description: '確認ダイアログが表示されます。“アカウント削除”と入力します。',
     image: taikai4,
   },
   {
-    title: '5. 赤い「アカウント削除」ボタンを押す',
-    description: '入力後、削除ボタンが有効化されるので実行します。',
+    title: '5. 赤い「アカウント削除」ボタンをクリック',
+    description: '入力後、「アカウント削除」ボタンが有効化されるので実行します。',
     image: taikai5,
   },
   {
     title: '6. メール確認コードを入力',
-    description: '確認が必要な場合は、メールで届いたコードを入力します。',
+    description: '確認が必要な場合は、あなたのメールに確認コード（６桁の数字）が届きます。それを入力。',
     image: taikai6,
   },
   {
-    title: '7. 退会後は「ログアウトする」表示になることを確認',
-    description: 'アカウントが無効化されると、ログイン状態が解除されます。',
+    title: '7. 退会後は「誰もログインしていない状態」になることを確認',
+    description: '退会しアカウントが無効化されると、ログイン状態が解除されます。ご自身が投稿したポストやリプライ、イイネも全て削除されます。',
     image: taikai7,
   },
 ];
