@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Sidebar } from '@/components/home/sidebar';
 import { RightSidebar } from '@/components/home/right-sidebar';
@@ -36,7 +37,9 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
 
         <main className="flex-1 md:max-w-[600px] min-w-0">
           <div className="sticky top-0 bg-background/80 backdrop-blur-sm z-10 px-4 py-3">
-            <h1 className="text-xl font-bold">☜　ポスト</h1>
+            <Link href="/" className="text-xl font-bold block transition-opacity hover:opacity-50">
+              ☜　ポスト
+            </Link>
           </div>
           
           {/* メイン投稿 */}

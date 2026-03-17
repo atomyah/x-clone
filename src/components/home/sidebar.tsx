@@ -13,6 +13,7 @@ import {
   UserCircle,
   UserPlus,
   UserMinus,
+  Mail,
   MoreHorizontal,
   LogIn,
   LogOut,
@@ -100,15 +101,7 @@ export function Sidebar({ className }: SidebarProps) {
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 text-gray-500"
-          title="ブックマーク"
-        >
-          <BookmarkIcon className="size-5 lg:size-7 shrink-0 text-gray-300" />
-          <span className="hidden lg:inline text-base text-gray-300">ブックマーク</span>
-        </Button>
-        <Button
-          variant="ghost"
-          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-500 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
+          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
           title="入会方法"
           asChild
         >
@@ -119,7 +112,7 @@ export function Sidebar({ className }: SidebarProps) {
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-500 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-rose-50/80 dark:hover:bg-rose-900/20 hover:shadow-sm hover:-translate-y-0.5"
+          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-rose-50/80 dark:hover:bg-rose-900/20 hover:shadow-sm hover:-translate-y-0.5"
           title="退会方法"
           asChild
         >
@@ -137,6 +130,17 @@ export function Sidebar({ className }: SidebarProps) {
           <Link href={profileUrl} onClick={handleProfileClick}>
             <UserCircle className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
             <span className="hidden lg:inline text-base transition-transform duration-200 group-hover:translate-x-0.5">プロフィール</span>
+          </Link>
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
+          title="お問い合わせ"
+          asChild
+        >
+          <Link href="/contact">
+            <Mail className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
+            <span className="hidden lg:inline text-base transition-transform duration-200 group-hover:translate-x-0.5">お問い合わせ</span>
           </Link>
         </Button>
       </nav>
