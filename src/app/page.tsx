@@ -1,4 +1,6 @@
 import { Sidebar } from '@/components/home/sidebar';
+
+export const dynamic = 'force-dynamic';
 import { RightSidebar } from '@/components/home/right-sidebar';
 import { PostForm } from '@/components/home/post-form';
 import { PostList } from '@/components/home/post-list';

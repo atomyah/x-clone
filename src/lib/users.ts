@@ -38,6 +38,30 @@ export type WebhookSyncStatus = {
 };
 
 /**
+ * Clerkの認証情報から現在のユーザー名を取得
+ * @returns ユーザー名（認証されていない場合はnull）
+ */
+export async function getCurrentUserUsername(): Promise<string | null> {
+  try {
+    const { userId: clerkId } = await auth();
+
+    if (!clerkId) {
+      return null;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { clerkId },
+      select: { username: true },
+    });
+
+    return user?.username || null;
+  } catch (error) {
+    console.error('ユーザー名取得エラー:', error);
+    return null;
+  }
+}
+
+/**
  * Clerkの認証情報からデータベースのユーザーIDを取得
  * @returns データベースのユーザーID（認証されていない場合はnull）
  */
