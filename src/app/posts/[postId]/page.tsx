@@ -6,10 +6,6 @@ import { PostItemDetailed } from '@/components/home/post-item-detailed';
 import { ReplyForm } from '@/components/home/reply-form';
 import { getPostWithReplies } from '@/lib/posts';
 import { mapPostWithRepliesToUI } from '@/lib/mappers';
-import type { Post, LiveEvent, NewsItem } from '@/types/post';
-
-const liveEvents: LiveEvent[] = [];
-const newsItems: NewsItem[] = [];
 
 interface PostDetailPageProps {
   params: Promise<{
@@ -66,7 +62,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
           )}
         </main>
 
-        <RightSidebar className="hidden lg:flex" liveEvents={liveEvents} newsItems={newsItems} />
+        <RightSidebar className="hidden lg:flex" />
       </div>
     </div>
   );

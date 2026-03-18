@@ -1,7 +1,7 @@
 -- SNSクローン用Seedデータ
 -- SupabaseのSQLエディタで実行してください
 
--- 既存のデータをクリア
+-- 既存のデータをクリア（必要に応じてコメントアウト）
 DELETE FROM likes;
 DELETE FROM follows;
 DELETE FROM posts;
@@ -16,7 +16,7 @@ VALUES
     'tanaka@example.com',
     'tanaka_taro',
     '田中太郎',
-    '日常の話題が好きです。',
+    'フルスタックエンジニア。React、TypeScript、Next.jsが好きです。',
     'https://api.dicebear.com/7.x/avataaars/svg?seed=tanaka',
     NULL,
     NOW() - INTERVAL '30 days',
@@ -28,7 +28,7 @@ VALUES
     'suzuki@example.com',
     'suzuki_hanako',
     '鈴木花子',
-    '趣味を楽しんでいます。',
+    'デザイナー兼フロントエンドエンジニア。UI/UXに興味があります。',
     'https://api.dicebear.com/7.x/avataaars/svg?seed=suzuki',
     NULL,
     NOW() - INTERVAL '25 days',
@@ -40,7 +40,7 @@ VALUES
     'sato@example.com',
     'sato_ichiro',
     '佐藤一郎',
-    'スポーツ観戦が好きです。',
+    'バックエンドエンジニア。Node.js、PostgreSQL、GraphQLが得意です。',
     'https://api.dicebear.com/7.x/avataaars/svg?seed=sato',
     NULL,
     NOW() - INTERVAL '20 days',
@@ -52,7 +52,7 @@ VALUES
     'yamada@example.com',
     'yamada_yuki',
     '山田優希',
-    '毎日を楽しんでいます。',
+    'プロダクトマネージャー。アジャイル開発とスクラムが好きです。',
     'https://api.dicebear.com/7.x/avataaars/svg?seed=yamada',
     NULL,
     NOW() - INTERVAL '15 days',
@@ -64,7 +64,7 @@ VALUES
     'watanabe@example.com',
     'watanabe_mika',
     '渡辺美香',
-    '好奇心旺盛です。',
+    'データサイエンティスト。機械学習とAIに興味があります。',
     'https://api.dicebear.com/7.x/avataaars/svg?seed=watanabe',
     NULL,
     NOW() - INTERVAL '10 days',
@@ -74,10 +74,10 @@ VALUES
 -- 投稿データ
 INSERT INTO posts (id, content, user_id, parent_id, created_at, updated_at)
 VALUES 
-  -- 田中太郎の投稿（大谷選手）
+  -- 田中太郎の投稿
   (
     'a1111111-1111-4111-a111-111111111111'::uuid,
-    '大谷翔平選手、またホームラン打った！大リーグで日本人選手がこんな活躍するなんて夢のよう。毎日ニュースチェックが楽しみです。',
+    'Next.js 16がリリースされました！新機能が盛りだくさんで楽しみです。特にキャッシュコンポーネントとPartial Prerenderingが気になります。',
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     NULL,
     NOW() - INTERVAL '5 days',
@@ -85,27 +85,27 @@ VALUES
   ),
   (
     'a2222222-2222-4222-a222-222222222222'::uuid,
-    '大谷選手の二刀流、本当にすごい。投手としても打者としても。史上初だよね。日本人としても',
+    'Prisma 7がリリースされましたね。型安全性がさらに向上して、開発体験が良くなりました。',
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
     NULL,
     NOW() - INTERVAL '3 days',
     NOW() - INTERVAL '3 days'
   ),
   
-  -- 鈴木花子の投稿（晴山紋音さん）
+  -- 鈴木花子の投稿
   (
     'b4444444-4444-4444-a444-444444444444'::uuid,
-    'NHKの天気予報、晴山紋音さんの説明が分かりやすくて毎朝見てます。すごく親しみやすく伝えてくれる。',
+    'Tailwind CSSの新しいv4が素晴らしいです！パフォーマンスが大幅に改善されました。',
     'b1ffcd99-9c0b-4ef8-bb6d-6bb9bd380a22'::uuid,
     NULL,
     NOW() - INTERVAL '2 days',
     NOW() - INTERVAL '2 days'
   ),
 
-  -- 佐藤一郎の投稿（生成AI）
+  -- 佐藤一郎の投稿
   (
     'c5555555-5555-4555-a555-555555555555'::uuid,
-    'プログラミングするにはもう生成AIがないとできない体になってしまった。',
+    'SupabaseのEdge Functionsを使って、リアルタイムAPIを構築しています。Denoベースで書きやすいですね。',
     'c2aabc99-9c0b-4ef8-bb6d-6bb9bd380a33'::uuid,
     NULL,
     NOW() - INTERVAL '6 days',
@@ -113,45 +113,37 @@ VALUES
   ),
   (
     'c6666666-6666-4666-a666-666666666666'::uuid,
-    'このＸクローンアプリも生成AIで作ったらしい。Claude Codeか？　あるいはAntigravityか？',
+    'PostgreSQLのJSONB型を活用すると、柔軟なスキーマ設計ができて便利です。',
     'c2aabc99-9c0b-4ef8-bb6d-6bb9bd380a33'::uuid,
     NULL,
     NOW() - INTERVAL '1 day',
     NOW() - INTERVAL '1 day'
   ),
 
-  -- 山田優希の投稿（アセンション・その他）
+  -- 山田優希の投稿
   (
     'd7777777-7777-4777-a777-777777777777'::uuid,
-    '何万年ぶりの風の時代に入ったってよく聞く。たしかに毎日通った行きつけの店🍷、週末行ってたパチンコ、なぜかやめてしまった。理由もない。',
+    'スプリントプランニングでチームの目標を明確にすることが重要です。みんなで協力して良いプロダクトを作りましょう！',
     'd3bbcd99-9c0b-4ef8-bb6d-6bb9bd380a44'::uuid,
     NULL,
     NOW() - INTERVAL '7 days',
     NOW() - INTERVAL '7 days'
   ),
 
-  -- 渡辺美香の投稿（日常・その他）
+  -- 渡辺美香の投稿
   (
     'e8888888-8888-4888-a888-888888888888'::uuid,
-    '今日のランチ、近所の新しいカフェ行ってきた。コーヒーが美味しくて癒された。おすすめスポットが増えるのって嬉しい。',
+    'Claude 3.5 Sonnetを使ったAIアプリケーション開発が面白いです。自然言語処理の精度がすごい！',
     'e4ccde99-9c0b-4ef8-bb6d-6bb9bd380a55'::uuid,
     NULL,
     NOW() - INTERVAL '8 days',
     NOW() - INTERVAL '8 days'
   ),
-  (
-    'e9999999-9999-4999-a999-999999999999'::uuid,
-    '週末のドライブ、紅葉がきれいだった。季節の移り変わりを感じるのが好き。',
-    'e4ccde99-9c0b-4ef8-bb6d-6bb9bd380a55'::uuid,
-    NULL,
-    NOW() - INTERVAL '4 days',
-    NOW() - INTERVAL '4 days'
-  ),
 
   -- リプライ（返信）
   (
     'f1111111-1111-4111-a111-111111111111'::uuid,
-    '私も大谷選手のニュース、毎日チェックしてます！MVP2年連続おめでとう！',
+    '私もNext.js 16試してみました！Partial Prerenderingは本当に画期的ですね。',
     'b1ffcd99-9c0b-4ef8-bb6d-6bb9bd380a22'::uuid,
     'a1111111-1111-4111-a111-111111111111'::uuid,
     NOW() - INTERVAL '4 days' - INTERVAL '2 hours',
@@ -159,20 +151,12 @@ VALUES
   ),
   (
     'f2222222-2222-4222-a222-222222222222'::uuid,
-    '晴山さん、天気予報以外の番組でも見かけるようになったね。人気出てきてる。',
+    '型安全性は本当に大事ですよね。バグを事前に防げるので開発が楽になります。',
     'c2aabc99-9c0b-4ef8-bb6d-6bb9bd380a33'::uuid,
-    'b4444444-4444-4444-a444-444444444444'::uuid,
+    'a2222222-2222-4222-a222-222222222222'::uuid,
     NOW() - INTERVAL '2 days' - INTERVAL '3 hours',
     NOW() - INTERVAL '2 days' - INTERVAL '3 hours'
   ),
-  (
-    'f3333333-3333-4333-a333-333333333333'::uuid,
-    '生成AIでこのXクローン作ったらしいよ！',
-    'd3bbcd99-9c0b-4ef8-bb6d-6bb9bd380a44'::uuid,
-    'c5555555-5555-4555-a555-555555555555'::uuid,
-    NOW() - INTERVAL '5 days' - INTERVAL '1 hour',
-    NOW() - INTERVAL '5 days' - INTERVAL '1 hour'
-  );
 
 -- フォロー関係
 INSERT INTO follows (follower_id, following_id, created_at)
@@ -210,9 +194,9 @@ VALUES
   ('e4ccde99-9c0b-4ef8-bb6d-6bb9bd380a55'::uuid, 'a2222222-2222-4222-a222-222222222222'::uuid, NOW() - INTERVAL '2 days'),
   
   -- 鈴木花子の投稿へのいいね
-  ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'b4444444-4444-4444-a444-444444444444'::uuid, NOW() - INTERVAL '3 days'),
-  ('c2aabc99-9c0b-4ef8-bb6d-6bb9bd380a33'::uuid, 'b4444444-4444-4444-a444-444444444444'::uuid, NOW() - INTERVAL '3 days'),
-  ('d3bbcd99-9c0b-4ef8-bb6d-6bb9bd380a44'::uuid, 'b4444444-4444-4444-a444-444444444444'::uuid, NOW() - INTERVAL '1 day'),
+  ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'b3333333-3333-4333-a333-333333333333'::uuid, NOW() - INTERVAL '3 days'),
+  ('c2aabc99-9c0b-4ef8-bb6d-6bb9bd380a33'::uuid, 'b3333333-3333-4333-a333-333333333333'::uuid, NOW() - INTERVAL '3 days'),
+  ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'b4444444-4444-4444-a444-444444444444'::uuid, NOW() - INTERVAL '1 day'),
   ('e4ccde99-9c0b-4ef8-bb6d-6bb9bd380a55'::uuid, 'b4444444-4444-4444-a444-444444444444'::uuid, NOW() - INTERVAL '1 day'),
   
   -- 佐藤一郎の投稿へのいいね
@@ -228,7 +212,6 @@ VALUES
   ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'e8888888-8888-4888-a888-888888888888'::uuid, NOW() - INTERVAL '7 days'),
   ('b1ffcd99-9c0b-4ef8-bb6d-6bb9bd380a22'::uuid, 'e8888888-8888-4888-a888-888888888888'::uuid, NOW() - INTERVAL '7 days'),
   ('c2aabc99-9c0b-4ef8-bb6d-6bb9bd380a33'::uuid, 'e8888888-8888-4888-a888-888888888888'::uuid, NOW() - INTERVAL '7 days'),
-  ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'e9999999-9999-4999-a999-999999999999'::uuid, NOW() - INTERVAL '3 days'),
   
   -- リプライへのいいね
   ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid, 'f1111111-1111-4111-a111-111111111111'::uuid, NOW() - INTERVAL '4 days'),
@@ -240,3 +223,4 @@ SELECT 'ユーザー数: ' || COUNT(*) FROM users;
 SELECT '投稿数: ' || COUNT(*) FROM posts;
 SELECT 'フォロー関係数: ' || COUNT(*) FROM follows;
 SELECT 'いいね数: ' || COUNT(*) FROM likes;
+

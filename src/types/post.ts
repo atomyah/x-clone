@@ -51,3 +51,10 @@ export interface NewsItem {
   verified?: boolean;
 }
 
+export interface Ad {
+  id: number;
+  url: string;
+  title?: string;
+  image?: string;
+}
+

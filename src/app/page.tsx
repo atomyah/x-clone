@@ -7,48 +7,6 @@ import { PostList } from '@/components/home/post-list';
 import { WebhookSyncStatus } from '@/components/home/webhook-sync-status';
 import { getTimelinePosts } from '@/lib/posts';
 import { mapPostsToUI } from '@/lib/mappers';
-import type { Post, LiveEvent, NewsItem } from '@/types/post';
-
-// 以下のダミーデータは<RightSidebar />コンポーネントのダミーデータ.
-const liveEvents: LiveEvent[] = [
-  {
-    id: 1,
-    user: 'まる',
-    status: '（本人）',
-    title: 'さづだーん笑お🎄11時終✓',
-    participants: [
-      'https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=100',
-      'https://images.pexels.com/photos/1288182/pexels-photo-1288182.jpeg?auto=compress&cs=tinysrgb&w=100',
-    ],
-    count: 14,
-  },
-  {
-    id: 2,
-    user: 'くてだまPfizer',
-    status: '2🎓',
-    title: 'スローぷ？レミーズ？な...',
-    participants: [
-      'https://images.pexels.com/photos/1520760/pexels-photo-1520760.jpeg?auto=compress&cs=tinysrgb&w=100',
-      'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100',
-    ],
-    count: 11,
-  },
-];
-
-// 以下のダミーデータは<RightSidebar />コンポーネントのダミーデータ.
-const newsItems: NewsItem[] = [
-  {
-    id: 1,
-    title: 'あしろう占いPCが...',
-    status: 'さんがホストしています',
-    verified: true,
-  },
-  {
-    id: 2,
-    title: '宣伝オリボス金闘スペース【引用リプOK】',
-    status: 'さんがホストしています',
-  },
-];
 
 export default async function Home() {
   // データアクセス層から投稿データを取得
@@ -79,7 +37,7 @@ export default async function Home() {
           )}
         </main>
 
-        <RightSidebar className="hidden lg:flex" liveEvents={liveEvents} newsItems={newsItems} />
+        <RightSidebar className="hidden lg:flex" />
       </div>
     </div>
   );

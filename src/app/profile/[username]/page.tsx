@@ -10,10 +10,6 @@ import { ProfileTimeline } from '@/components/profile/profile-timeline';
 import { getUserByUsername, getCurrentUserId, isFollowing } from '@/lib/users';
 import { getUserPosts } from '@/lib/posts';
 import { mapPostsToUI, formatUserProfile } from '@/lib/mappers';
-import type { Post, LiveEvent, NewsItem } from '@/types/post';
-
-const liveEvents: LiveEvent[] = [];
-const newsItems: NewsItem[] = [];
 
 interface ProfilePageProps {
   params: Promise<{
@@ -83,7 +79,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           )}
         </main>
 
-        <RightSidebar className="hidden lg:flex" liveEvents={liveEvents} newsItems={newsItems} />
+        <RightSidebar className="hidden lg:flex" />
       </div>
     </div>
   );

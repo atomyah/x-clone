@@ -4,10 +4,6 @@ import { RightSidebar } from '@/components/home/right-sidebar';
 import { ProfileEditForm } from '@/components/profile/profile-edit-form';
 import { getUserByUsername, getCurrentUserId } from '@/lib/users';
 import { formatUserProfile } from '@/lib/mappers';
-import type { LiveEvent, NewsItem } from '@/types/post';
-
-const liveEvents: LiveEvent[] = [];
-const newsItems: NewsItem[] = [];
 
 interface ProfileEditPageProps {
   params: Promise<{
@@ -62,7 +58,7 @@ export default async function ProfileEditPage({ params }: ProfileEditPageProps) 
           </div>
         </main>
 
-        <RightSidebar className="hidden lg:flex" liveEvents={liveEvents} newsItems={newsItems} />
+        <RightSidebar className="hidden lg:flex" />
       </div>
     </div>
   );
