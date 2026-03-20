@@ -89,7 +89,7 @@ export function ContactForm() {
           type="text"
           required
           defaultValue={defaultName}
-          placeholder="晴山　紋音"
+          placeholder="佐藤 アキラ"
           className="w-full"
           maxLength={100}
         />
