@@ -6,6 +6,9 @@
 //   RESEND_API_KEY       - Resend APIキー（必須）
 //   RECAPTCHA_SECRET_KEY - reCAPTCHA v3 シークレットキー（任意、未設定時は検証スキップ）
 //   NEXT_PUBLIC_RECAPTCHA_SITE_KEY - reCAPTCHA v3 サイトキー（任意、RECAPTCHA_SECRET_KEYとセット）
+//   RECAPTCHA_MIN_SCORE - v3 の合格スコア下限（任意、既定 0.5。厳しすぎる場合は 0.3 など）
+// 本番（Vercel）で reCAPTCHA を使う場合:
+//   Google reCAPTCHA 管理画面で「ドメイン」に本番ホスト（例: x-clone.tech）を追加すること。
 
 'use server';
 
@@ -54,17 +57,43 @@ function checkRateLimit(ip: string): { allowed: boolean; message?: string } {
   return { allowed: true };
 }
 
-async function verifyRecaptcha(token: string): Promise<boolean> {
+async function verifyRecaptcha(token: string, remoteIp: string): Promise<boolean> {
   const secret = process.env.RECAPTCHA_SECRET_KEY;
   if (!secret) return false;
+
+  const minScore = Number.parseFloat(process.env.RECAPTCHA_MIN_SCORE ?? '0.5');
+  const threshold = Number.isFinite(minScore) ? minScore : 0.5;
+
+  const params = new URLSearchParams();
+  params.set('secret', secret);
+  params.set('response', token);
+  if (remoteIp && remoteIp !== 'unknown') {
+    params.set('remoteip', remoteIp);
+  }
 
   const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `secret=${secret}&response=${token}`,
+    body: params.toString(),
   });
-  const data = (await res.json()) as { success?: boolean; score?: number };
-  return Boolean(data.success && (data.score ?? 0) >= 0.5);
+  const data = (await res.json()) as {
+    success?: boolean;
+    score?: number;
+    'error-codes'?: string[];
+  };
+
+  if (!data.success) {
+    console.error('[reCAPTCHA] siteverify failed:', data['error-codes'] ?? 'no error-codes');
+    return false;
+  }
+
+  const score = data.score ?? 0;
+  if (score < threshold) {
+    console.error('[reCAPTCHA] score too low:', score, 'threshold:', threshold);
+    return false;
+  }
+
+  return true;
 }
 
 export type SubmitContactState = {
@@ -107,7 +136,7 @@ export async function submitContact(
         return { success: false, error: 'reCAPTCHAの検証に失敗しました。ページを再読み込みして再度お試しください。' };
       }
 
-      const recaptchaValid = await verifyRecaptcha(recaptchaToken);
+      const recaptchaValid = await verifyRecaptcha(recaptchaToken, ip);
       if (!recaptchaValid) {
         return { success: false, error: 'ボット検証に失敗しました。再度お試しください。' };
       }
