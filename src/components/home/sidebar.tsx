@@ -108,7 +108,7 @@ export function Sidebar({ className }: SidebarProps) {
           title="入会方法"
           asChild
         >
-          <Link href="/nyukai">
+          <Link href="/nyukai" target="_blank" rel="noopener noreferrer">
             <UserPlus className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
             <span className="hidden lg:inline text-base transition-transform duration-200 group-hover:translate-x-0.5">入会方法</span>
           </Link>
@@ -119,7 +119,7 @@ export function Sidebar({ className }: SidebarProps) {
           title="退会方法"
           asChild
         >
-          <Link href="/taikai">
+          <Link href="/taikai" target="_blank" rel="noopener noreferrer">
             <UserMinus className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
             <span className="hidden lg:inline text-base transition-transform duration-200 group-hover:translate-x-0.5">退会方法</span>
           </Link>
