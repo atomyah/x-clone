@@ -36,8 +36,11 @@ export function Sidebar({ className }: SidebarProps) {
 
   const username = user?.username || user?.emailAddresses[0]?.emailAddress?.split('@')[0] || 'username';
 
-  // usernameから@を除去してプロフィールURLを生成
-  const profileUrl = `/profile/${username.replace('@', '')}`;
+  // 未ログイン・Clerk 読み込み中は /profile（ログイン案内）。ログイン済みは実ユーザー名の URL
+  const profileUrl =
+    isSignedIn && isLoaded && user
+      ? `/profile/${username.replace('@', '')}`
+      : '/profile';
 
   const handleProfileClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // 親要素のクリックイベントを防ぐ
