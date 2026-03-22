@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useActionState, useCallback, useEffect, useRef } from 'react';
 import { useAuth, useClerk, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,6 +11,9 @@ import { EmojiPicker } from '@/components/ui/emoji-picker';
 import { createPost, type CreatePostState } from '@/lib/actions/posts';
 
 const initialState: CreatePostState | null = null;
+
+/** leading-6 相当の7行分（10.5rem @ 16px root） */
+const TEXTAREA_MAX_HEIGHT_PX = 168;
 
 export function PostForm() {
   const [state, formAction, isPending] = useActionState<CreatePostState | null, FormData>(
@@ -24,12 +27,26 @@ export function PostForm() {
   const { openSignIn } = useClerk();
   const { user } = useUser();
 
+  const adjustTextareaHeight = useCallback(() => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    ta.style.height = 'auto';
+    ta.style.height = `${Math.min(ta.scrollHeight, TEXTAREA_MAX_HEIGHT_PX)}px`;
+  }, []);
+
   // 投稿成功時にフォームをリセット
   useEffect(() => {
     if (state?.success && formRef.current) {
       formRef.current.reset();
+      requestAnimationFrame(() => {
+        const ta = textareaRef.current;
+        if (ta) {
+          ta.style.removeProperty('height');
+          adjustTextareaHeight();
+        }
+      });
     }
-  }, [state?.success]);
+  }, [state?.success, adjustTextareaHeight]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     if (!isSignedIn) {
@@ -57,6 +74,7 @@ export function PostForm() {
       // フォームの値を更新（Reactの制御コンポーネントではないため、手動で更新）
       const event = new Event('input', { bubbles: true });
       textarea.dispatchEvent(event);
+      adjustTextareaHeight();
     }
   };
 
@@ -74,9 +92,11 @@ export function PostForm() {
             <textarea
               ref={textareaRef}
               name="content"
-              className="w-full min-h-[60px] resize-none bg-transparent text-xl placeholder:text-muted-foreground focus:outline-none"
+              className="w-full min-h-[48px] max-h-42 resize-none overflow-y-auto bg-transparent text-sm leading-6 placeholder:text-muted-foreground focus:outline-none"
               placeholder="いまどうしてる？"
               required
+              rows={1}
+              onInput={adjustTextareaHeight}
             />
             {state?.error && (
               <div className="mt-2 text-sm text-destructive">
