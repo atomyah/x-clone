@@ -73,8 +73,8 @@ export function Sidebar({ className }: SidebarProps) {
   }, []);
 
   return (
-    <aside className={`w-[220px] lg:w-[230px] h-screen sticky top-0 px-2 lg:px-3 py-4 flex flex-col items-stretch shrink-0 ${className || ''}`}>
-      <div className="flex items-center justify-start gap-2 px-1 lg:px-3 mb-8">
+    <aside className={`w-[55px] lg:w-[230px] h-screen sticky top-0 px-1 lg:px-3 py-4 flex flex-col items-center lg:items-stretch shrink-0 ${className || ''}`}>
+      <div className="flex items-center justify-center lg:justify-start gap-2 px-3 mb-8">
         <Link href="/" className="flex items-center justify-center">
           <div className="w-8 h-8 bg-black dark:bg-white rounded-full flex items-center justify-center hover:bg-black/90 dark:hover:bg-white/90 transition-colors">
             <span className="text-white dark:text-black font-black text-xl tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Y</span>
@@ -85,65 +85,65 @@ export function Sidebar({ className }: SidebarProps) {
       <nav className="flex-1 space-y-2 w-full">
         <Button
           variant="ghost"
-          className="w-full justify-start gap-3 lg:gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
+          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
           title="ホーム"
           asChild
         >
           <Link href="/">
             <HomeIcon className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-sm lg:text-base font-medium min-w-0 truncate transition-transform duration-200 group-hover:translate-x-0.5">ホーム</span>
+            <span className="hidden lg:inline text-base font-medium transition-transform duration-200 group-hover:translate-x-0.5">ホーム</span>
           </Link>
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-3 lg:gap-4 h-10 lg:h-12 text-gray-500"
+          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 text-gray-500"
           title="通知"
         >
           <Bell className="size-5 lg:size-7 shrink-0 text-gray-300" />
-          <span className="text-sm lg:text-base text-gray-300 min-w-0 truncate">通知</span>
+          <span className="hidden lg:inline text-base text-gray-300">通知</span>
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-3 lg:gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
+          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
           title="入会方法"
           asChild
         >
           <Link href="/nyukai">
             <UserPlus className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-sm lg:text-base min-w-0 truncate transition-transform duration-200 group-hover:translate-x-0.5">入会方法</span>
+            <span className="hidden lg:inline text-base transition-transform duration-200 group-hover:translate-x-0.5">入会方法</span>
           </Link>
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-3 lg:gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-rose-50/80 dark:hover:bg-rose-900/20 hover:shadow-sm hover:-translate-y-0.5"
+          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-rose-50/80 dark:hover:bg-rose-900/20 hover:shadow-sm hover:-translate-y-0.5"
           title="退会方法"
           asChild
         >
           <Link href="/taikai">
             <UserMinus className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-sm lg:text-base min-w-0 truncate transition-transform duration-200 group-hover:translate-x-0.5">退会方法</span>
+            <span className="hidden lg:inline text-base transition-transform duration-200 group-hover:translate-x-0.5">退会方法</span>
           </Link>
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-3 lg:gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
+          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
           title="プロフィール"
           asChild
         >
           <Link href={profileUrl} onClick={handleProfileClick}>
             <UserCircle className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-sm lg:text-base min-w-0 truncate transition-transform duration-200 group-hover:translate-x-0.5">プロフィール</span>
+            <span className="hidden lg:inline text-base transition-transform duration-200 group-hover:translate-x-0.5">プロフィール</span>
           </Link>
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-3 lg:gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
+          className="w-full justify-center lg:justify-start gap-4 h-10 lg:h-12 rounded-xl group transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-sky-600 dark:hover:text-sky-300 hover:bg-sky-50/80 dark:hover:bg-sky-900/20 hover:shadow-sm hover:-translate-y-0.5"
           title="お問い合わせ"
           asChild
         >
           <Link href="/contact">
             <Mail className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-            <span className="text-sm lg:text-base min-w-0 truncate transition-transform duration-200 group-hover:translate-x-0.5">お問い合わせ</span>
+            <span className="hidden lg:inline text-base transition-transform duration-200 group-hover:translate-x-0.5">お問い合わせ</span>
           </Link>
         </Button>
       </nav>
@@ -151,19 +151,19 @@ export function Sidebar({ className }: SidebarProps) {
       <SignedOut>
         <SignInButton mode="modal">
           <Button
-            className="w-full h-11 lg:h-12 rounded-xl lg:rounded-full font-bold mb-4 text-xs sm:text-sm lg:text-base justify-center gap-2 px-3 lg:px-4 bg-zinc-800 text-white transition-colors duration-200 hover:bg-zinc-700 hover:shadow-md hover:shadow-zinc-900/20"
+            className="w-12 h-12 lg:w-full lg:h-12 rounded-full font-bold mb-4 text-sm lg:text-base justify-center p-0 lg:px-4 bg-zinc-800 text-white transition-colors duration-200 hover:bg-zinc-700 hover:shadow-md hover:shadow-zinc-900/20"
             title="ログイン／サインアップ"
             type="button"
           >
-            <LogIn className="size-4 sm:size-5 shrink-0" />
-            <span className="min-w-0 truncate">ログイン(あるいは入会)</span>
+            <LogIn className="size-5 lg:hidden" />
+            <span className="hidden lg:inline">ログイン(あるいは入会)</span>
           </Button>
         </SignInButton>
       </SignedOut>
       <SignedIn>
         <div className="relative mb-4" ref={logoutMenuRef}>
           <Button
-            className="w-full h-11 lg:h-12 rounded-xl lg:rounded-full font-bold text-sm lg:text-base justify-center gap-2 px-3 lg:px-4 bg-zinc-800 text-white transition-colors duration-200 hover:bg-zinc-700 hover:shadow-md hover:shadow-zinc-900/20"
+            className="w-12 h-12 lg:w-full lg:h-12 rounded-full font-bold text-sm lg:text-base justify-center p-0 lg:px-4 bg-zinc-800 text-white transition-colors duration-200 hover:bg-zinc-700 hover:shadow-md hover:shadow-zinc-900/20"
             title="ログアウト"
             type="button"
             onClick={(e) => {
@@ -172,8 +172,8 @@ export function Sidebar({ className }: SidebarProps) {
               setIsLogoutMenuOpen((prev) => !prev);
             }}
           >
-            <LogOut className="size-4 sm:size-5 shrink-0" />
-            <span className="min-w-0 truncate">ログアウト</span>
+            <LogOut className="size-5 lg:hidden" />
+            <span className="hidden lg:inline">ログアウト</span>
           </Button>
           {isLogoutMenuOpen && (
             <div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 lg:left-0 lg:translate-x-0 min-w-[150px] rounded-xl bg-background shadow-xl shadow-black/20 dark:shadow-black/50 p-1">
@@ -212,13 +212,13 @@ export function Sidebar({ className }: SidebarProps) {
           </div>
           {isLoaded && (
             <>
-              <div className="flex flex-col items-start text-sm flex-1 min-w-0">
-                <span className="font-semibold truncate w-full">{displayName}</span>
-                <span className="text-xs text-muted-foreground truncate w-full">
+              <div className="hidden lg:flex flex-col items-start text-sm flex-1">
+                <span className="font-semibold">{displayName}</span>
+                <span className="text-xs text-muted-foreground">
                   @{username}
                 </span>
               </div>
-              <MoreHorizontal className="size-6 lg:size-7 shrink-0" />
+              <MoreHorizontal className="size-7 shrink-0 hidden lg:block" />
             </>
           )}
         </button>
@@ -226,23 +226,23 @@ export function Sidebar({ className }: SidebarProps) {
       <SignedOut>
         <Button
           variant="ghost"
-          className="w-full justify-between h-10 lg:h-16 rounded-full hover:bg-muted/50 px-1"
+          className="w-full justify-center lg:justify-between h-10 lg:h-16 rounded-full hover:bg-muted/50"
           title="ログイン"
           asChild
         >
           <Link href="/sign-in">
-            <div className="flex items-center gap-2 lg:gap-3 flex-1 min-w-0 justify-start group">
+            <div className="flex items-center gap-3 flex-1 justify-center lg:justify-start group">
               <Avatar className="h-6 w-6 lg:h-9 lg:w-9 shrink-0 transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:ring-2 group-hover:ring-primary/30">
                 <AvatarFallback>?</AvatarFallback>
               </Avatar>
-              <div className="flex flex-col items-start text-sm min-w-0 flex-1">
-                <span className="font-semibold truncate w-full">ログイン</span>
-                <span className="text-xs text-muted-foreground truncate w-full">
+              <div className="hidden lg:flex flex-col items-start text-sm">
+                <span className="font-semibold">ログイン</span>
+                <span className="text-xs text-muted-foreground">
                   アカウントにアクセス
                 </span>
               </div>
             </div>
-            <MoreHorizontal className="size-6 lg:size-7 shrink-0" />
+            <MoreHorizontal className="size-7 shrink-0 hidden lg:block" />
           </Link>
         </Button>
       </SignedOut>
