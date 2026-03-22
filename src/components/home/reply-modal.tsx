@@ -127,7 +127,7 @@ export function ReplyModal({
                   <span className="font-bold">{replyToName}</span>
                   <span className="text-sm text-muted-foreground">{replyToUsername}</span>
                 </div>
-                <p className="text-sm text-foreground break-words">{replyToContent}</p>
+                <p className="text-sm text-foreground wrap-break-word whitespace-pre-wrap">{replyToContent}</p>
               </div>
             </div>
           </div>

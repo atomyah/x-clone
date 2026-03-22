@@ -122,7 +122,7 @@ export function PostItemDetailed({ post, showReplies = false, clickable = false 
               <MoreHorizontal className="w-4 h-4" />
             </Button>
           </div>
-          <p className="text-base mb-3 leading-normal">
+          <p className="text-base mb-3 leading-normal whitespace-pre-wrap wrap-break-word">
             {post.content}
           </p>
 
@@ -132,7 +132,7 @@ export function PostItemDetailed({ post, showReplies = false, clickable = false 
                 <span className="font-bold text-sm truncate">{post.quotedPost.user.name}</span>
                 <span className="text-xs text-muted-foreground shrink-0">{post.quotedPost.user.username}</span>
               </div>
-              <p className="text-sm text-foreground wrap-break-word">{post.quotedPost.content}</p>
+              <p className="text-sm text-foreground wrap-break-word whitespace-pre-wrap">{post.quotedPost.content}</p>
             </div>
           )}
           

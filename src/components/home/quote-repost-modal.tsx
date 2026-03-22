@@ -136,7 +136,7 @@ export function QuoteRepostModal({
                         <span className="font-bold text-sm">{quotedToName}</span>
                         <span className="text-xs text-muted-foreground">{quotedToUsername}</span>
                       </div>
-                      <p className="text-sm text-foreground wrap-break-word">{quotedToContent}</p>
+                      <p className="text-sm text-foreground wrap-break-word whitespace-pre-wrap">{quotedToContent}</p>
                     </div>
                   </div>
                 </div>
