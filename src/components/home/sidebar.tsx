@@ -241,7 +241,7 @@ export function Sidebar({ className }: SidebarProps) {
         </div>
       </div>
 
-      <nav className="flex-1 space-y-2 w-full">
+      <nav className="w-full flex-none space-y-2 lg:flex-1">
         <CompactNavLinkItem
           label="ホーム"
           href="/"
@@ -305,7 +305,7 @@ export function Sidebar({ className }: SidebarProps) {
         />
       </nav>
 
-      <div className="mt-16 flex flex-col w-full shrink-0 lg:items-stretch items-center">
+      <div className="mt-4 flex w-full shrink-0 flex-col items-center lg:mt-16 lg:items-stretch">
       <SignedOut>
         <TopSignInCompact isLg={isLg} supportsHover={supportsHover} useFlyoutNav={useFlyoutNav} />
       </SignedOut>
