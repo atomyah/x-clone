@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/tooltip';
 import { useIsLgSidebar } from '@/hooks/use-is-lg-sidebar';
 import { useSupportsHover } from '@/hooks/use-supports-hover';
+import { useFlyoutSidebarNav } from '@/hooks/use-flyout-sidebar-nav';
 import {
   Home as HomeIcon,
   Bell,
@@ -31,10 +32,11 @@ interface SidebarProps {
 }
 
 const flyoutPanelClass =
-  'absolute z-50 bottom-full mb-2 left-0 min-w-[150px] rounded-xl bg-background shadow-xl shadow-black/20 dark:shadow-black/50 p-1';
+  'absolute z-50 bottom-full mb-2 left-0 min-w-[150px] rounded-xl border-0 bg-white p-1 dark:bg-white ' +
+  'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_4px_14px_rgba(0,0,0,0.12),0_12px_32px_rgba(0,0,0,0.14)]';
 
 const flyoutItemClass =
-  'w-full text-left text-sm px-3 py-2 rounded-lg hover:bg-muted/60 transition-colors block';
+  'w-full text-left text-sm font-medium text-zinc-900 px-3 py-2 rounded-lg hover:bg-zinc-100 transition-colors block dark:text-zinc-900';
 
 function useDismissOnOutsidePointer(open: boolean, setOpen: (v: boolean) => void, ref: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -54,7 +56,7 @@ function useDismissOnOutsidePointer(open: boolean, setOpen: (v: boolean) => void
   }, [open, ref, setOpen]);
 }
 
-/** ナビの Link 行：ホバー時は Tooltip、タッチ本体ではタップでパネル→パネル内で遷移 */
+/** ナビの Link 行：スマホ想定のみパネル二段階。狭いPC＋マウスは Tooltip＋リンク直接クリック */
 function CompactNavLinkItem({
   label,
   href,
@@ -66,6 +68,7 @@ function CompactNavLinkItem({
   lgSpanClassName = 'text-base transition-transform duration-200 group-hover:translate-x-0.5',
   isLg,
   supportsHover,
+  useFlyoutNav,
 }: {
   label: string;
   href: string;
@@ -77,6 +80,7 @@ function CompactNavLinkItem({
   lgSpanClassName?: string;
   isLg: boolean;
   supportsHover: boolean;
+  useFlyoutNav: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -102,6 +106,35 @@ function CompactNavLinkItem({
         <Link {...linkProps}>{inner}</Link>
       </Button>
     );
+  }
+
+  if (useFlyoutNav) {
+    return (
+    <div ref={wrapRef} className="relative mb-0 w-full max-w-full flex justify-center lg:block">
+      <Button
+        type="button"
+        variant="ghost"
+        className={buttonClassName}
+        onClick={() => setOpen((v) => !v)}
+      >
+        {inner}
+      </Button>
+      {open && (
+        <div className={flyoutPanelClass}>
+          <Link
+            {...linkProps}
+            className={flyoutItemClass}
+            onClick={(e) => {
+              onLinkClick?.(e);
+              setOpen(false);
+            }}
+          >
+            {label}
+          </Link>
+        </div>
+      )}
+    </div>
+  );
   }
 
   if (supportsHover) {
@@ -150,6 +183,7 @@ function CompactNavLinkItem({
 export function Sidebar({ className }: SidebarProps) {
   const isLg = useIsLgSidebar();
   const supportsHover = useSupportsHover();
+  const useFlyoutNav = useFlyoutSidebarNav();
   const { user, isLoaded } = useUser();
   const { isSignedIn } = useAuth();
   const clerk = useClerk();
@@ -217,6 +251,7 @@ export function Sidebar({ className }: SidebarProps) {
           icon={<HomeIcon className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />}
           isLg={isLg}
           supportsHover={supportsHover}
+          useFlyoutNav={useFlyoutNav}
         />
         <Button
           variant="ghost"
@@ -234,6 +269,7 @@ export function Sidebar({ className }: SidebarProps) {
           icon={<UserPlus className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />}
           isLg={isLg}
           supportsHover={supportsHover}
+          useFlyoutNav={useFlyoutNav}
         />
         <CompactNavLinkItem
           label="退会方法"
@@ -244,6 +280,7 @@ export function Sidebar({ className }: SidebarProps) {
           icon={<UserMinus className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />}
           isLg={isLg}
           supportsHover={supportsHover}
+          useFlyoutNav={useFlyoutNav}
         />
         <CompactNavLinkItem
           label="プロフィール"
@@ -254,6 +291,7 @@ export function Sidebar({ className }: SidebarProps) {
           icon={<UserCircle className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />}
           isLg={isLg}
           supportsHover={supportsHover}
+          useFlyoutNav={useFlyoutNav}
         />
         <CompactNavLinkItem
           label="お問い合わせ"
@@ -263,12 +301,13 @@ export function Sidebar({ className }: SidebarProps) {
           icon={<Mail className="size-5 lg:size-7 shrink-0 transition-transform duration-200 group-hover:scale-110" />}
           isLg={isLg}
           supportsHover={supportsHover}
+          useFlyoutNav={useFlyoutNav}
         />
       </nav>
 
       <div className="mt-16 flex flex-col w-full shrink-0 lg:items-stretch items-center">
       <SignedOut>
-        <TopSignInCompact isLg={isLg} supportsHover={supportsHover} />
+        <TopSignInCompact isLg={isLg} supportsHover={supportsHover} useFlyoutNav={useFlyoutNav} />
       </SignedOut>
       <SignedIn>
         <div className="relative mb-4 w-full max-w-full flex justify-center lg:block" ref={logoutMenuRef}>
@@ -285,10 +324,10 @@ export function Sidebar({ className }: SidebarProps) {
             <span className="hidden lg:inline">ログアウト</span>
           </Button>
           {isLogoutMenuOpen && (
-            <div className="absolute z-50 bottom-full mb-2 left-0 min-w-[150px] rounded-xl bg-background shadow-xl shadow-black/20 dark:shadow-black/50 p-1">
+            <div className={flyoutPanelClass}>
               <button
                 type="button"
-                className="w-full text-left text-sm px-3 py-2 rounded-lg hover:bg-muted/60 transition-colors"
+                className={flyoutItemClass}
                 onClick={() => {
                   setIsLogoutMenuOpen(false);
                   clerk.signOut();
@@ -305,6 +344,7 @@ export function Sidebar({ className }: SidebarProps) {
         <AccountRowCompact
           isLg={isLg}
           supportsHover={supportsHover}
+          useFlyoutNav={useFlyoutNav}
           displayName={displayName}
           username={username}
           isLoaded={isLoaded}
@@ -315,7 +355,7 @@ export function Sidebar({ className }: SidebarProps) {
         />
       </SignedIn>
       <SignedOut>
-        <BottomSignInCompact isLg={isLg} supportsHover={supportsHover} />
+        <BottomSignInCompact isLg={isLg} supportsHover={supportsHover} useFlyoutNav={useFlyoutNav} />
       </SignedOut>
       </div>
     </aside>
@@ -323,7 +363,15 @@ export function Sidebar({ className }: SidebarProps) {
   );
 }
 
-function TopSignInCompact({ isLg, supportsHover }: { isLg: boolean; supportsHover: boolean }) {
+function TopSignInCompact({
+  isLg,
+  supportsHover,
+  useFlyoutNav,
+}: {
+  isLg: boolean;
+  supportsHover: boolean;
+  useFlyoutNav: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   useDismissOnOutsidePointer(open, setOpen, wrapRef);
@@ -343,6 +391,32 @@ function TopSignInCompact({ isLg, supportsHover }: { isLg: boolean; supportsHove
       <span className="inline-flex w-full justify-center lg:block">
         <SignInButton mode="modal">{button}</SignInButton>
       </span>
+    );
+  }
+
+  if (useFlyoutNav) {
+    return (
+    <div ref={wrapRef} className="relative w-full max-w-full flex justify-center mb-4 lg:mb-0 lg:block">
+      <span className="inline-flex w-full justify-center lg:block">
+        <Button
+          type="button"
+          className="w-12 h-12 lg:w-full lg:h-12 rounded-full font-bold mb-0 lg:mb-4 text-sm lg:text-base justify-center p-0 lg:px-4 bg-zinc-800 text-white transition-colors duration-200 hover:bg-zinc-700 hover:shadow-md hover:shadow-zinc-900/20"
+          onClick={() => setOpen((v) => !v)}
+        >
+          <LogIn className="size-5 lg:hidden" />
+          <span className="hidden lg:inline">ログイン(あるいは入会)</span>
+        </Button>
+      </span>
+      {open && (
+        <div className={flyoutPanelClass}>
+          <SignInButton mode="modal">
+            <button type="button" className={flyoutItemClass} onClick={() => setOpen(false)}>
+              ログイン／サインアップ
+            </button>
+          </SignInButton>
+        </div>
+      )}
+    </div>
     );
   }
 
@@ -389,6 +463,7 @@ function TopSignInCompact({ isLg, supportsHover }: { isLg: boolean; supportsHove
 function AccountRowCompact({
   isLg,
   supportsHover,
+  useFlyoutNav,
   displayName,
   username,
   isLoaded,
@@ -399,6 +474,7 @@ function AccountRowCompact({
 }: {
   isLg: boolean;
   supportsHover: boolean;
+  useFlyoutNav: boolean;
   displayName: string;
   username: string;
   isLoaded: boolean;
@@ -450,6 +526,30 @@ function AccountRowCompact({
     );
   }
 
+  if (useFlyoutNav) {
+    return (
+      <div ref={wrapRef} className="relative w-full max-w-full flex justify-center lg:block">
+        <button type="button" className={rowClass} onClick={() => setOpen((v) => !v)}>
+          {rowInner}
+        </button>
+        {open && (
+          <div className={flyoutPanelClass}>
+            <button
+              type="button"
+              className={flyoutItemClass}
+              onClick={() => {
+                setOpen(false);
+                onOpenAccount();
+              }}
+            >
+              アカウント設定
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   if (supportsHover) {
     return (
       <Tooltip>
@@ -496,7 +596,15 @@ function AccountRowCompact({
   );
 }
 
-function BottomSignInCompact({ isLg, supportsHover }: { isLg: boolean; supportsHover: boolean }) {
+function BottomSignInCompact({
+  isLg,
+  supportsHover,
+  useFlyoutNav,
+}: {
+  isLg: boolean;
+  supportsHover: boolean;
+  useFlyoutNav: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   useDismissOnOutsidePointer(open, setOpen, wrapRef);
@@ -524,6 +632,23 @@ function BottomSignInCompact({ isLg, supportsHover }: { isLg: boolean; supportsH
       <Button variant="ghost" className={btnClass} asChild>
         <Link href="/sign-in">{inner}</Link>
       </Button>
+    );
+  }
+
+  if (useFlyoutNav) {
+    return (
+      <div ref={wrapRef} className="relative w-full max-w-full flex justify-center lg:block">
+        <Button type="button" variant="ghost" className={btnClass} onClick={() => setOpen((v) => !v)}>
+          {inner}
+        </Button>
+        {open && (
+          <div className={flyoutPanelClass}>
+            <Link href="/sign-in" className={flyoutItemClass} onClick={() => setOpen(false)}>
+              ログイン
+            </Link>
+          </div>
+        )}
+      </div>
     );
   }
 
