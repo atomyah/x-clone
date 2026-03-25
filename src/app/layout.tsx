@@ -36,8 +36,8 @@ export default function RootLayout({
           <div className="flex h-dvh max-h-dvh flex-col overflow-hidden">
             <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
             <footer className="shrink-0 border-t mt-8 py-4 text-center text-xs text-muted-foreground">
-              ⚠️ 本サービスは技術学習を目的としたデモサイトです。<br />
-              ⚠️ 実験的な機能を含むため、予告なく仕様変更・サービス停止する場合があります。
+              ⚠️本サービスは技術検証を目的としたデモアプリです<br />
+              ⚠️実験的な機能を含むため予告なく仕様変更・サービス停止するかもしれません
             </footer>
           </div>
         </body>

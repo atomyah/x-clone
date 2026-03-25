@@ -496,13 +496,12 @@ function AccountRowCompact({
         </Avatar>
       </div>
       {isLoaded && (
-        <>
-          <div className="hidden lg:flex flex-col items-start text-sm flex-1">
-            <span className="font-semibold">{displayName}</span>
-            <span className="text-xs text-muted-foreground">@{username}</span>
-          </div>
-          <MoreHorizontal className="size-7 shrink-0 hidden lg:block" />
-        </>
+        <div className="hidden lg:flex min-w-0 flex-1 w-full flex-col items-stretch gap-0.5 text-sm text-left">
+          <span className="w-full font-semibold wrap-break-word leading-snug">{displayName}</span>
+          <span className="w-full text-xs text-muted-foreground break-all leading-snug">
+            @{username}
+          </span>
+        </div>
       )}
     </>
   );
