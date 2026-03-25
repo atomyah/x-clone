@@ -33,7 +33,13 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {children}
+          <div className="flex h-dvh max-h-dvh flex-col overflow-hidden">
+            <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
+            <footer className="shrink-0 border-t mt-8 py-4 text-center text-xs text-muted-foreground">
+              ⚠️ 本サービスは技術学習を目的としたデモサイトです。<br />
+              ⚠️ 実験的な機能を含むため、予告なく仕様変更・サービス停止する場合があります。
+            </footer>
+          </div>
         </body>
       </html>
     </ClerkProvider>

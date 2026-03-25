@@ -7,7 +7,13 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        xs: "475px",  // 既定640px
+        md: "950px",  // 既定768px
+        lg: "950px",  // 既定1024px
+      },
+    },
   },
   plugins: [],
 };

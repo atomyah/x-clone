@@ -5,8 +5,8 @@ import { ContactContent } from '@/components/contact/contact-content';
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      <div className="max-w-[1280px] mx-auto flex w-full h-screen overflow-y-auto">
+    <div className="h-full min-h-0 bg-background overflow-x-hidden">
+      <div className="max-w-[1280px] mx-auto flex w-full h-full min-h-0 overflow-y-auto">
         <Sidebar />
 
         <main className="flex-1 md:max-w-[800px] min-w-0 border-x border-border/40">

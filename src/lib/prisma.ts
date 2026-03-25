@@ -5,9 +5,10 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-// prisma.config.ts と同じ優先順位: DIRECT_URL（直接5432）→ DATABASE_URL
-// ローカルで Pooler(6543) が ETIMEDOUT になり、db execute だけ通る場合はここが原因になりやすい
-const databaseUrl = process.env.DIRECT_URL || process.env.DATABASE_URL;
+// ランタイムは DATABASE_URL（Transaction pooler / 6543）を優先する。
+// DIRECT_URL（db.*.supabase.co:5432）は AAAA 解決され、WSL 等で IPv6 未到達（ENETUNREACH）になりやすい。
+// マイグレーションは prisma.config.ts の datasource が DIRECT_URL を使用する。
+const databaseUrl = process.env.DATABASE_URL || process.env.DIRECT_URL;
 if (!databaseUrl) {
   throw new Error("DATABASE_URL または DIRECT_URL が設定されていません。");
 }
